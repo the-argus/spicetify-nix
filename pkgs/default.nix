@@ -50,9 +50,9 @@ in
 
     extensions =
       let
-        mkOfficialExt = name: { ${name} = { src = /${officialSrc}/Extensions; filename = "${name}.js"; }; };
+        mkOfficialExt = name: { "${name}.js" = { src = /${officialSrc}/Extensions; filename = "${name}.js"; }; };
       in
-      { dribbblish = dribbblishExt; }
+      { "dribbblish.js" = dribbblishExt; }
       // mkOfficialExt "autoSkipExplicit"
       // mkOfficialExt "autoSkipVideo"
       // mkOfficialExt "bookmark"
