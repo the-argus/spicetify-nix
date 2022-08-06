@@ -15,7 +15,6 @@ let
               sidebar_config = mkOption { type = types.bool; default = true; };
             };
           });
-          default = {};
         };
         Patch = { };
         Setting = mkOption {
@@ -32,7 +31,6 @@ let
               overwrite_assets = mkOption { type = types.bool; default = false; };
             };
           });
-          default = {};
         };
         Preprocesses = mkOption {
           type = (types.submodule {
@@ -44,7 +42,6 @@ let
               expose_apis = mkOption { type = types.bool; default = true; };
             };
           });
-          default = {};
         };
         Backup = mkOption {
           type = (types.submodule {
@@ -53,7 +50,6 @@ let
               "with" = mkOption { type = types.str; default = "Dev"; };
             };
           });
-          default = {};
         };
       };
   };

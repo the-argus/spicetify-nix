@@ -115,11 +115,11 @@ in
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
         overridenXpui1 = builtins.mapAttrs
-          (name: value: (lib.trivial.mergeAttrs (if cfg.xpui.${name} then cfg.xpui.${name} else {}) value))
+          (name: value: (lib.trivial.mergeAttrs (if builtins.hasAttr name cfg.xpui then cfg.xpui.${name} else {}) value))
           (mkXpuiOverrides theme);
         # override any values defined by the theme with values defined in cfg
         overridenXpui2 = builtins.mapAttrs
-          (name: value: (lib.trivial.mergeAttrs (if overridenXpui1.${name} then overridenXpui1.${name} else {}) value))
+          (name: value: (lib.trivial.mergeAttrs (if builtins.hasAttr name overridenXpui1 then overridenXpui1.${name} else {}) value))
           (mkXpuiOverrides cfg);
 
         config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
