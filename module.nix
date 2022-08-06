@@ -78,7 +78,7 @@ in
         pipeConcat = foldr (a: b: a + "|" + b) "";
         # take the list of extensions and turn strings into actual extensions
         allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
-          (if cfg.theme.requiredExtensions then
+          (if builtins.hasAttr "requiredExtensions" cfg.theme then
             cfg.theme.requiredExtensions
           else
             [ ]
