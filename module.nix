@@ -118,7 +118,7 @@ in
               custom_apps = customAppsString;
             };
             Setting = { }
-              // createBoolOverride container "injectCss" "inject_css"
+              // (if builtins.hasAttr "injectCss" container then (createBoolOverride container "injectCss" "inject_css") else {})
               // createBoolOverride container "replaceColors" "replace_colors"
               // createBoolOverride container "overwriteAssets" "overwrite_assets"
               // createBoolOverride container "sidebarConfig" "sidebar_config"
