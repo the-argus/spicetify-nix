@@ -71,6 +71,7 @@ in
     injectCss = mkOption { type = lib.types.nullOr lib.types.bool; };
     replaceColors = mkOption { type = lib.types.nullOr lib.types.bool; };
     overwriteAssets = mkOption { type = lib.types.nullOr lib.types.bool; };
+    colorScheme = mkOption { type = lib.types.nullOr lib.types.str; };
   };
 
   config = mkIf cfg.enable {
@@ -81,12 +82,19 @@ in
         extensionString = pipeConcat cfg.enabledExtensions;
         customAppsString = pipeConcat cfg.enabledCustomApps;
 
-        xpuiOverrides = {
-          Setting = {
-            inject_css = cfg.injectCss;
-            replace_colors = cfg.replaceColors;
-            overwrite_assets = cfg.overwriteAssets;
-          };
+        xpuiOverrides = 
+        let
+            createBoolOverride = cfgVal: cfgName: 
+                (if cfgVal || (builtins.typeOf cfgVal == "bool") then { cfgName = cfgVal; } else {});
+            createOverride = cfgVal: cfgName: 
+                (if cfgVal then { cfgName = cfgVal; } else {});
+        in
+        {
+          Setting = {}
+          // createBoolOverride cfg.injectCss "inject_css"
+          // createBoolOverride cfg.replaceColors "replace_colors"
+          // createBoolOverride cfg.overwriteAssets "overwriteAssets"
+          // createOverride cfg.colorScheme "color_scheme";
         };
 
         overridenXpui = builtins.mapAttrs
