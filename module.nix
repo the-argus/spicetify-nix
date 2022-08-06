@@ -2,12 +2,14 @@
 with lib;
 let
   cfg = config.programs.spicetify;
+  spiceTypes = import ./types.nix { inherit pkgs lib; };
 in
 {
   options.programs.spicetify = {
     enable = mkEnableOption "A modded Spotify";
+    
     theme = mkOption {
-      type = types.str;
+      type = types.oneOf [ types.str spiceTypes.theme ];
       default = "";
     };
 
@@ -25,7 +27,7 @@ in
 
     themesSrc = mkOption {
       type = types.package;
-      default = builtins.fetchGit {
+      default = builtins.fetchgit {
         url = "https://github.com/spicetify/spicetify-themes";
         rev = "5d3d42f913467f413be9b0159f5df5023adf89af";
         submodules = true;
@@ -40,10 +42,6 @@ in
       description = "Extra commands to be run during the setup of spicetify.";
     };
 
-    colorScheme = mkOption {
-      type = types.str;
-      default = "";
-    };
     thirdPartyThemes = mkOption {
       type = types.attrs;
       default = { };
@@ -61,82 +59,6 @@ in
     thirdPartyCustomApps = mkOption {
       type = types.attrs;
       default = { };
-    };
-    enabledExtensions = mkOption {
-      type = types.listOf types.str;
-      default = [ ];
-    };
-    enabledCustomApps = mkOption {
-      type = types.listOf types.str;
-      default = [ ];
-    };
-    spotifyLaunchFlags = mkOption {
-      type = types.str;
-      default = "";
-    };
-    injectCss = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    replaceColors = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    overwriteAssets = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    disableSentry = mkOption {
-      type = types.bool;
-      default = true;
-    };
-    disableUiLogging = mkOption {
-      type = types.bool;
-      default = true;
-    };
-    removeRtlRule = mkOption {
-      type = types.bool;
-      default = true;
-    };
-    exposeApis = mkOption {
-      type = types.bool;
-      default = true;
-    };
-    disableUpgradeCheck = mkOption {
-      type = types.bool;
-      default = true;
-    };
-    fastUserSwitching = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    visualizationHighFramerate = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    radio = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    songPage = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    experimentalFeatures = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    home = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    lyricAlwaysShow = mkOption {
-      type = types.bool;
-      default = false;
-    };
-    lyricForceNoSync = mkOption {
-      type = types.bool;
-      default = false;
     };
   };
 
@@ -169,7 +91,7 @@ in
                 if v == true then "1"
                 else if v == false then "0"
                 # else if isString v then ''"${v}"''
-                # and delegats all other values to the default generator
+                # and delegates all other values to the default generator
                 else lib.generators.mkValueStringDefault { } v;
             } "=";
         };
@@ -180,7 +102,7 @@ in
             experimental_features = cfg.experimentalFeatures;
             extensions = extensionString;
             custom_apps = customAppsString;
-            sidebar_config = 0; # i dont know what this does
+            sidebar_config = 1; # i dont know what this does
           };
           Patch = { };
           Setting = {
@@ -214,11 +136,11 @@ in
         # Helper functions
         lineBreakConcat = foldr (a: b: a + "\n" + b) "";
         boolToString = x: if x then "1" else "0";
-        makeCpCommands = type: (mapAttrsToList (name: path: 
-        let
+        makeCpCommands = type: (mapAttrsToList (name: path:
+          let
             extension = if type == "Extensions" then ".js" else "";
-        in
-        "cp -r ${path} ./${type}/${name}${extension} && ${pkgs.coreutils-full}/bin/chmod -R a+wr ./${type}/${name}${extension}"));
+          in
+          "cp -r ${path} ./${type}/${name}${extension} && ${pkgs.coreutils-full}/bin/chmod -R a+wr ./${type}/${name}${extension}"));
 
         spicetify = "${cfg.spicetifyPackage}/bin/spicetify-cli --no-restart";
 
