@@ -78,10 +78,12 @@ in
         pipeConcat = foldr (a: b: a + "|" + b) "";
         # take the list of extensions and turn strings into actual extensions
         allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
-          (if builtins.hasAttr "requiredExtensions" cfg.theme then
-            cfg.theme.requiredExtensions
-          else
-            [ ]
+          (if builtins.typeOf cfg.theme == "set" then
+            (if builtins.hasAttr "requiredExtensions" cfg.theme then
+              cfg.theme.requiredExtensions
+            else
+              [ ]
+            ) else [ ]
           ) ++ cfg.xpui.AdditionalOptions.extensions);
         allExtensionFiles = map (item: item.filename) allExtensions;
         extensionString = pipeConcat allExtensionFiles;
