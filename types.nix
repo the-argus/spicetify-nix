@@ -7,7 +7,7 @@ let
       let
         mkNullableOption = type: mkOption { type = (if allowNull then (types.nullOr type) else (type)); };
       in
-      {
+      rec {
         AdditionalOptions = mkOption {
           type = types.submodule {
             options = {
@@ -54,6 +54,8 @@ let
             };
           };
         };
+        # duplicates of other options
+        inject_css = Setting.inject_css;
       };
   });
   
@@ -83,6 +85,5 @@ let
 
 in
 {
-
   inherit theme extension;
 }
