@@ -10,12 +10,12 @@ let
             options = {
               home = mkOption { type = types.bool; default = false; };
               experimental_features = mkOption { type = types.bool; default = false; };
-              extensions = mkOption { type = (types.listOf types.str); default = []; };
-              custom_apps = mkOption { type = (types.listOf types.str); default = []; };
+              extensions = mkOption { type = (types.listOf types.str); default = [ ]; };
+              custom_apps = mkOption { type = (types.listOf types.str); default = [ ]; };
               sidebar_config = mkOption { type = types.bool; default = true; };
             };
           });
-          default = {};
+          default = { };
         };
         Patch = { };
         Setting = mkOption {
@@ -32,7 +32,7 @@ let
               overwrite_assets = mkOption { type = types.bool; default = false; };
             };
           });
-          default = {};
+          default = { };
         };
         Preprocesses = mkOption {
           type = (types.submodule {
@@ -44,7 +44,7 @@ let
               expose_apis = mkOption { type = types.bool; default = true; };
             };
           });
-          default = {};
+          default = { };
         };
         Backup = mkOption {
           type = (types.submodule {
@@ -53,7 +53,7 @@ let
               "with" = mkOption { type = types.str; default = "Dev"; };
             };
           });
-          default = {};
+          default = { };
         };
       };
   };
@@ -130,27 +130,27 @@ let
         type = types.nullOr types.bool;
       };
     };
+  };
 
-    app = types.submodule {
-      options = {
-        src = mkOption {
-          type = types.str;
-          description = "Path to the folder containing the app code.";
-          example =
-            ''
-              pkgs.fetchgit {
-                url = "https://github.com/hroland/spicetify-show-local-files/";
-                rev = "1bfd2fc80385b21ed6dd207b00a371065e53042e";
-                sha256 = "01gy16b69glqcalz1wm8kr5wsh94i419qx4nfmsavm4rcvcr3qlx";
-              };
-            '';
-        };
-        name = mkOption {
-          types = types.nullOr types.str;
-          description = "Name of the app. No spaces or special characters please :)";
-        };
-        appendName = mkOption { types = types.bool; default = true; };
+  app = types.submodule {
+    options = {
+      src = mkOption {
+        type = types.str;
+        description = "Path to the folder containing the app code.";
+        example =
+          ''
+            pkgs.fetchgit {
+              url = "https://github.com/hroland/spicetify-show-local-files/";
+              rev = "1bfd2fc80385b21ed6dd207b00a371065e53042e";
+              sha256 = "01gy16b69glqcalz1wm8kr5wsh94i419qx4nfmsavm4rcvcr3qlx";
+            };
+          '';
       };
+      name = mkOption {
+        types = types.nullOr types.str;
+        description = "Name of the app. No spaces or special characters please :)";
+      };
+      appendName = mkOption { types = types.bool; default = true; };
     };
   };
 in
