@@ -2,12 +2,13 @@
 with lib;
 let
   cfg = config.programs.spicetify;
-  spiceTypes = import ./types.nix { inherit pkgs lib; };
+  spiceLib = import ./lib { inherit pkgs lib; };
+  spiceTypes = spiceLib.types;
 in
 {
-  options.programs.spicetify = {
+  options.programs.spicetify = rec {
     enable = mkEnableOption "A modded Spotify";
-    
+
     theme = mkOption {
       type = types.oneOf [ types.str spiceTypes.theme ];
       default = "";
@@ -32,8 +33,7 @@ in
         rev = "5d3d42f913467f413be9b0159f5df5023adf89af";
         submodules = true;
       };
-      description = "A package which contains, at its root, a Themes directory,
-        which should be copied into the spicetify themes directory.";
+      description = "A package whose contents should be copied into the spicetify themes directory.";
     };
 
     extraCommands = mkOption {
@@ -60,74 +60,28 @@ in
       type = types.attrs;
       default = { };
     };
+
+    xpui = mkOption {
+      type = spiceTypes.xpui;
+      default = { };
+    };
+
+    # legacy/ease of use options (commonly set for themes like Dribbblish)
+    # injectCss = xpui.Setting.inject_css;
+    injectCss = xpui.inject_css;
+    replaceColors = xpui.Setting.replace_colors;
+    overwriteAssets = xpui.Setting.overwrite_assets;
   };
 
   config = mkIf cfg.enable {
     # install necessary packages for this user
     home.packages = with cfg;
       let
-        # turn certain values on by default if we know the theme needs it
-        isDribbblish = cfg.theme == "Dribbblish";
-        isTurntable = cfg.theme == "Turntable";
-        injectCSSReal = boolToString (isDribbblish || cfg.injectCss);
-        replaceColorsReal = boolToString (isDribbblish || cfg.replaceColors);
-        overwriteAssetsReal = boolToString (isDribbblish || cfg.overwriteAssets);
-
-
         pipeConcat = foldr (a: b: a + "|" + b) "";
-        extensionString = pipeConcat (
-          (if isDribbblish then [ "dribbblish.js" ] else [ ])
-          ++ (if isTurntable then [ "turntable.js" ] else [ ])
-          ++ cfg.enabledExtensions
-        );
+        extensionString = pipeConcat cfg.enabledExtensions;
         customAppsString = pipeConcat cfg.enabledCustomApps;
 
-        customToINI = lib.generators.toINI {
-          # specifies how to format a key/value pair
-          mkKeyValue = lib.generators.mkKeyValueDefault
-            {
-              # specifies the generated string for a subset of nix values
-              mkValueString = v:
-                if v == true then "1"
-                else if v == false then "0"
-                # else if isString v then ''"${v}"''
-                # and delegates all other values to the default generator
-                else lib.generators.mkValueStringDefault { } v;
-            } "=";
-        };
-
-        config-xpui = builtins.toFile "config-xpui.ini" (customToINI {
-          AdditionalOptions = {
-            home = cfg.home;
-            experimental_features = cfg.experimentalFeatures;
-            extensions = extensionString;
-            custom_apps = customAppsString;
-            sidebar_config = 1; # i dont know what this does
-          };
-          Patch = { };
-          Setting = {
-            spotify_path = "__REPLACEME__"; # to be replaced in the spotify postInstall
-            prefs_path = "__REPLACEME2__";
-            current_theme = cfg.theme;
-            color_scheme = cfg.colorScheme;
-            spotify_launch_flags = cfg.spotifyLaunchFlags;
-            check_spicetify_upgrade = 0;
-            inject_css = injectCSSReal;
-            replace_colors = replaceColorsReal;
-            overwrite_assets = overwriteAssetsReal;
-          };
-          Preprocesses = {
-            disable_upgrade_check = cfg.disableUpgradeCheck;
-            disable_sentry = cfg.disableSentry;
-            disable_ui_logging = cfg.disableUiLogging;
-            remove_rtl_rule = cfg.removeRtlRule;
-            expose_apis = cfg.exposeApis;
-          };
-          Backup = {
-            version = cfg.spotifyPackage.version;
-            "with" = "Dev";
-          };
-        });
+        config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI cfg.xpui);
 
         # INI created, now create the postInstall that runs spicetify
         inherit (pkgs.lib.lists) foldr;
@@ -167,8 +121,6 @@ in
             # find ${cfg.themesSrc} -maxdepth 1 -type d -exec ln -s {} Themes \;
             mkdir -p Extensions
             ${cfg.extraCommands}
-            ${if isDribbblish then "cp ./Themes/Dribbblish/dribbblish.js ./Extensions/dribbblish.js \n" else ""}
-            ${if isTurntable then "cp ./Themes/Turntable/turntable.js ./Extensions/turntable.js \n" else ""}
             # copy themes into Themes folder
             ${lineBreakConcat (makeCpCommands "Themes" cfg.thirdPartyThemes)}
             # copy extensions into Extensions folder
@@ -179,7 +131,7 @@ in
             popd
 
             pushd $out/share/spotify
-            ${lineBreakConcat (makeCpCommands "Apps" thirdPartyCustomApps)}
+            ${lineBreakConcat (makeCpCommands "Apps" cfg.thirdPartyCustomApps)}
             popd
             
             ${spicetify} backup apply
