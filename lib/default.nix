@@ -14,7 +14,7 @@ let
       } "=";
   };
 
-  spicePkgs = import ../pkgs { inherit pkgs lib cfg; };
+  spicePkgs = import ../pkgs { inherit pkgs lib; };
 in
 {
   types = import ./types.nix { inherit pkgs lib; };
