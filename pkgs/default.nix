@@ -65,7 +65,7 @@ in
       // mkOfficialExt "webnowplaying";
 
     apps = {
-      new_releases = {
+      new-releases = {
         src = /${officialSrc}/CustomApps;
         name = "new-releases";
       };
