@@ -6,6 +6,12 @@ let
     submodules = true;
   };
 
+  officialSrc = builtins.fetchgit {
+    url = "https://github.com/spicetify/spicetify-cli";
+    rev = "6f473f28151c75e08e83fb280dd30fadd22d9c04";
+    sha256 = "0vw0271vbvpgyb0y97lafc5hqpfy5947zm7r2wlg17f8w94vsfhv";
+  };
+
   spiceTypes = (import ../lib { inherit pkgs lib; }).types;
 in
 {
@@ -41,5 +47,36 @@ in
       mkOfficialTheme "Dreary" //
       mkOfficialTheme "Default" //
       mkOfficialTheme "BurntSienna";
+
+    extensions =
+      let
+        mkOfficialExt = name: { ${name} = { src = /${officialSrc}/Extensions; filename = "${name}.js"; }; };
+      in
+      { }
+      // mkOfficialExt "autoSkipExplicit"
+      // mkOfficialExt "autoSkipVideo"
+      // mkOfficialExt "bookmark"
+      // mkOfficialExt "fullAppDisplay"
+      // mkOfficialExt "keyboardShortcut"
+      // mkOfficialExt "loopyLoop"
+      // mkOfficialExt "popupLyrics"
+      // mkOfficialExt "shuffle+"
+      // mkOfficialExt "trashbin"
+      // mkOfficialExt "webnowplaying";
+
+    apps = {
+      new_releases = {
+        src = /${officialSrc}/CustomApps;
+        name = "new-releases";
+      };
+      reddit = {
+        src = /${officialSrc}/CustomApps;
+        name = "reddit";
+      };
+      lyrics-plus = {
+        src = /${officialSrc}/CustomApps;
+        name = "lyrics-plus";
+      };
+    };
   };
 }

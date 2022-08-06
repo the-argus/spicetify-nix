@@ -77,19 +77,19 @@ in
       let
         pipeConcat = foldr (a: b: a + "|" + b) "";
         # take the list of extensions and turn strings into actual extensions
-        resolvedExtensions = map spiceLib.getExtensionFile cfg.thirdPartyExtensions;
-        # add a theme's required extensions
-        allExtensionFiles = ((map (item: item.filename) cfg.thirdPartyExtensions) ++
+        resolvedExtensions = map spiceLib.getExtension (cfg.thirdPartyExtensions ++
           (if cfg.theme.requiredExtensions then
             cfg.theme.requiredExtensions
           else
             [ ]
-          ));
+          ) ++ cfg.xpui.AdditionalOptions.extensions);
+        allExtensionFiles = map (item: item.filename) allExtensions;
         extensionString = pipeConcat allExtensionFiles;
 
         # do the same thing again but for customapps this time
-        resolvedApps = map spiceLib.getAppName cfg.enabledCustomApps;
-        customAppsString = pipeConcat cfg.enabledCustomApps;
+        allApps = map spiceLib.getApp (cfg.enabledCustomApps ++ cfg.xpui.AdditionalOptions.custom_apps);
+        allAppsNames = map (item: item.name) allApps;
+        customAppsString = pipeConcat allAppsNames;
 
         mkXpuiOverrides =
           let
@@ -99,6 +99,10 @@ in
               (if cfgVal then { cfgName = cfgVal; } else { });
           in
           container: {
+            AdditionalOptions = {
+              extensions = extensionString;
+              custom_apps = customAppsString;
+            };
             Setting = { }
               // createBoolOverride container.injectCss "inject_css"
               // createBoolOverride container.replaceColors "replace_colors"
@@ -106,6 +110,7 @@ in
               // createBoolOverride container.sidebarConfig "sidebar_config"
               # also add the colorScheme as an override if defined in cfg
               // (if container == cfg then createOverride container.colorScheme "color_scheme" else { });
+            Patch = (if container == cfg.theme then container.patches else { });
           };
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
@@ -125,14 +130,22 @@ in
 
         # Helper functions
         lineBreakConcat = foldr (a: b: a + "\n" + b) "";
-        boolToString = x: if x then "1" else "0";
-        makeCpCommands = type: (mapAttrsToList (name: path:
-          let
-            extension = if type == "Extensions" then ".js" else "";
-          in
-          "cp -r ${path} ./${type}/${name}${extension} && ${pkgs.coreutils-full}/bin/chmod -R a+wr ./${type}/${name}${extension}"));
+
+        extensionCommands = lineBreakConcat (map
+          (item:
+            "cp -r ${item.src}/${item.filename} ./Extensions/${item.filename}"
+          )
+          allExtensions);
+
+        customAppCommands = lineBreakConcat (map
+          (item:
+            "cp -r ${(if item.appendName then "${item.src}/${item.name}" else "${item.src}")} ./CustomApps/${item.name}")
+          allApps);
 
         spicetify = "${cfg.spicetifyPackage}/bin/spicetify-cli --no-restart";
+
+        theme = spiceLib.getTheme cfg.theme;
+        themePath = spiceLib.getThemePath theme;
 
         # custom spotify package with spicetify integrated in
         spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
@@ -151,21 +164,17 @@ in
             sed -i "s|__REPLACEME2__|$out/share/spotify/prefs|g" config-xpui.ini
             
             mkdir -p Themes
-            cp -r ${spiceLib.getThemePathFull cfg.theme} Themes/
-            ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
-            
             mkdir -p Extensions
-            ${cfg.extraCommands}
+            mkdir -p CustomApps
+            cp -r ${themePath} ./Themes/${theme.name}
+            ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
             # copy extensions into Extensions folder
-            ${lineBreakConcat (makeCpCommands "Extensions" cfg.thirdPartyExtensions)}
+            ${extensionCommands}
             # copy custom apps into CustomApps folder
-            ${lineBreakConcat (makeCpCommands "CustomApps" cfg.thirdPartyCustomApps)}
-            popd
-
-            pushd $out/share/spotify
-            ${lineBreakConcat (makeCpCommands "Apps" cfg.thirdPartyCustomApps)}
-            popd
+            ${customAppCommands}
             
+            ${cfg.extraCommands}
+            popd
             ${spicetify} backup apply
             
             # fix config to point to home directory (not necessary I don't think, but whatever)

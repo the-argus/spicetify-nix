@@ -14,7 +14,7 @@ let
       } "=";
   };
 
-  spicePkgs = import ../pkgs { inherit pkgs lib; };
+  spicePkgs = import ../pkgs { inherit pkgs lib cfg; };
 in
 {
   types = import ./types.nix { inherit pkgs lib; };
@@ -24,23 +24,35 @@ in
   getThemePath = theme: (if theme.appendName then ${theme.src}/${theme.name} else theme.src);
 
   # same thing but if its a string it looks it up in the default pkgs
-  getThemePathFull = theme:
+  getTheme = theme:
     if builtins.typeOf theme == "string" then
       (
         if spicePkgs.${theme.name} then
-          getThemePath spicePkgs.${theme.name}
+          spicePkgs.${theme.name}
         else
           throw "Unknown theme ${theme.name}. Try using the lib.theme type instead of a string."
       )
-    else (getThemePath theme);
+    else theme;
 
-  getExtensionFile = ext: (
+  getExtension = ext:
     if builtins.typeOf ext == "string" then
-      (if spicePkgs.official.extensions.${ext} then
-        spicePkgs.official.extensions.${ext}
-      else
-        throw "Uknown extension ${ext}. Try using the lib.extension type instead of a string.")
+      (
+        if spicePkgs.official.extensions.${ext} then
+          spicePkgs.official.extensions.${ext}
+        else
+          throw "Unknown extension ${ext}. Try using the lib.extension type instead of a string."
+      )
     else
-      ext
-  );
+      ext;
+
+  getApp = app:
+    if builtins.typeOf app == "string" then
+      (
+        if spicePkgs.official.apps.${app} then
+          spicePkgs.official.apps.${app}
+        else
+          throw "Unknown CustomApp ${app}. Try using the lib.app type instead of a string."
+      )
+    else
+      app;
 }
