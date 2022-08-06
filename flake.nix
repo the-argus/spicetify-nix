@@ -7,7 +7,7 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      pkgs = import nixpkgs { inherit "x86_64-linux"; };
+      pkgs = import nixpkgs { system = "x86_64-linux"; };
     in
     {
       homeManagerModule = import ./module.nix;
