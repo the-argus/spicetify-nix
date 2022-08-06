@@ -68,9 +68,9 @@ in
 
     # legacy/ease of use options (commonly set for themes like Dribbblish)
     # injectCss = xpui.Setting.inject_css;
-    injectCss = spiceTypes.xpui.Setting.inject_css;
-    replaceColors = spiceTypes.xpui.Setting.replace_colors;
-    overwriteAssets = spiceTypes.xpui.Setting.overwrite_assets;
+    injectCss = mkOption { type = lib.types.nullOr lib.types.bool; };
+    replaceColors = mkOption { type = lib.types.nullOr lib.types.bool; };
+    overwriteAssets = mkOption { type = lib.types.nullOr lib.types.bool; };
   };
 
   config = mkIf cfg.enable {
