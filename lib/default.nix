@@ -28,7 +28,7 @@ in
     if builtins.typeOf theme == "string" then
       (
         if builtins.hasAttr theme spicePkgs.official.themes then
-          spicePkgs.official.${theme}
+          spicePkgs.official.themes.${theme}
         else
           throw "Unknown theme ${theme}. Try using the lib.theme type instead of a string."
       )
