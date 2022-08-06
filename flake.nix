@@ -3,13 +3,11 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-
-    system = "x86_64-linux";
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs { inherit "x86_64-linux"; };
     in
     {
       homeManagerModule = import ./module.nix;
