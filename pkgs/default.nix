@@ -13,6 +13,11 @@ let
   };
 
   spiceTypes = (import ../lib { inherit pkgs lib; }).types;
+
+  dribbblishExt = {
+    filename = "dribbblish.js";
+    src = /${officialThemes}/Dribbblish;
+  };
 in
 {
   official = {
@@ -24,12 +29,7 @@ in
         Dribbblish = {
           name = "Dribbblish";
           src = officialThemes;
-          requiredExtensions = [
-            {
-              filename = "dribbblish.js";
-              src = /${officialThemes}/Dribbblish;
-            }
-          ];
+          requiredExtensions = [ dribbblishExt ];
           patches = {
             "xpui.js_find_8008" = ",(\\w+=)32";
             "xpui.js_repl_8008" = ",$\{1}56";
@@ -52,7 +52,7 @@ in
       let
         mkOfficialExt = name: { ${name} = { src = /${officialSrc}/Extensions; filename = "${name}.js"; }; };
       in
-      { }
+      { dribbblish = dribbblishExt; }
       // mkOfficialExt "autoSkipExplicit"
       // mkOfficialExt "autoSkipVideo"
       // mkOfficialExt "bookmark"
