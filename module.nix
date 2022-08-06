@@ -77,7 +77,7 @@ in
       let
         pipeConcat = foldr (a: b: a + "|" + b) "";
         # take the list of extensions and turn strings into actual extensions
-        resolvedExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
+        allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
           (if cfg.theme.requiredExtensions then
             cfg.theme.requiredExtensions
           else
