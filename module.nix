@@ -95,10 +95,22 @@ in
 
         mkXpuiOverrides =
           let
-            createBoolOverride = cfgVal: cfgName:
-              (if cfgVal || (builtins.typeOf cfgVal == "bool") then { cfgName = cfgVal; } else { });
-            createOverride = cfgVal: cfgName:
-              (if cfgVal then { cfgName = cfgVal; } else { });
+            createBoolOverride = set: attrName: cfgName:
+              if builtins.hasAttr attrName set then
+                let
+                  cfgVal = set.${attrName};
+                in
+                (if (builtins.typeOf cfgVal == "bool") then
+                  { cfgName = cfgVal; }
+                else
+                  { })
+              else
+                { };
+            createOverride = set: attrName: cfgName:
+              if builtins.hasAttr attrName set then
+                { cfgName = set.${attrName}; }
+              else
+                { };
           in
           container: {
             AdditionalOptions = {
@@ -106,12 +118,12 @@ in
               custom_apps = customAppsString;
             };
             Setting = { }
-              // createBoolOverride container.injectCss "inject_css"
-              // createBoolOverride container.replaceColors "replace_colors"
-              // createBoolOverride container.overwriteAssets "overwrite_assets"
-              // createBoolOverride container.sidebarConfig "sidebar_config"
+              // createBoolOverride container "injectCss" "inject_css"
+              // createBoolOverride container "replaceColors" "replace_colors"
+              // createBoolOverride container "overwriteAssets" "overwrite_assets"
+              // createBoolOverride container "sidebarConfig" "sidebar_config"
               # also add the colorScheme as an override if defined in cfg
-              // (if container == cfg then createOverride container.colorScheme "color_scheme" else { });
+              // (if container == cfg then createOverride container "colorScheme" "color_scheme" else { });
             Patch = (if container == cfg.theme then container.patches else { });
           };
 
