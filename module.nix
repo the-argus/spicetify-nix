@@ -68,7 +68,7 @@ in
 
     # legacy/ease of use options (commonly set for themes like Dribbblish)
     # injectCss = xpui.Setting.inject_css;
-    injectCss = xpui.inject_css;
+    injectCss = xpui.Setting.inject_css;
     replaceColors = xpui.Setting.replace_colors;
     overwriteAssets = xpui.Setting.overwrite_assets;
   };
