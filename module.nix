@@ -33,7 +33,7 @@ in
       description = "Extra commands to be run during the setup of spicetify.";
     };
 
-    thirdPartyExtensions = mkOption {
+    enabledExtensions = mkOption {
       type = types.listOf (types.oneOf [ spiceTypes.extension types.str ]);
       default = [ ];
       description = "A list of extensions. Official extensions such as \"dribbblish.js\" can be referenced by string alone.";
@@ -52,7 +52,7 @@ in
         ]
       '';
     };
-    thirdPartyCustomApps = mkOption {
+    enabledCustomApps = mkOption {
       type = types.listOf (types.oneOf [ spiceTypes.app types.str ]);
       default = { };
     };
@@ -77,7 +77,7 @@ in
       let
         pipeConcat = foldr (a: b: a + "|" + b) "";
         # take the list of extensions and turn strings into actual extensions
-        resolvedExtensions = map spiceLib.getExtension (cfg.thirdPartyExtensions ++
+        resolvedExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
           (if cfg.theme.requiredExtensions then
             cfg.theme.requiredExtensions
           else
