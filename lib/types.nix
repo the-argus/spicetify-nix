@@ -155,5 +155,5 @@ let
   };
 in
 {
-  inherit theme extension xpui;
+  inherit theme extension xpui app;
 }
