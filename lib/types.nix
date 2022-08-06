@@ -62,14 +62,14 @@ let
       };
       filename = mkOption {
         type = types.str;
-        description = "Name of the .js file to use.";
+        description = "Name of the .js file to enable.";
         example = "dribbblish.js";
       };
     };
   };
 
   theme = types.submodule {
-    options = rec {
+    options = {
       name = mkOption {
         type = types.str;
         description = "The name of the theme as it will be copied into the spicetify themes directory.";
@@ -101,6 +101,17 @@ let
         '';
       };
 
+      patches = mkOption {
+        type = types.nullOr types.attrs;
+        example = ''
+          {
+              "xpui.js_find_8008" = ",(\\w+=)32";
+              "xpui.js_repl_8008" = ",$\{1}56";
+          };
+        '';
+        description = "INI entries to add in the [Patch] section of config-xpui.ini";
+      };
+
       # some config values that can be specified per-theme
       injectCss = mkOption {
         type = types.nullOr types.bool;
@@ -110,6 +121,30 @@ let
       };
       replaceColors = mkOption {
         type = types.nullOr types.bool;
+      };
+      sidebarConfig = mkOption {
+        type = types.nullOr types.bool;
+      };
+    };
+
+    app = types.submodule {
+      options = {
+        src = mkOption {
+          type = types.str;
+          description = "Path to the folder containing the app code.";
+          example =
+          ''
+          pkgs.fetchgit {
+            url = "https://github.com/hroland/spicetify-show-local-files/";
+            rev = "1bfd2fc80385b21ed6dd207b00a371065e53042e";
+            sha256 = "01gy16b69glqcalz1wm8kr5wsh94i419qx4nfmsavm4rcvcr3qlx";
+          };
+          '';
+        };
+        name = mkOption {
+            types = types.nullOr types.str;
+            description = "Name of the app. No spaces or special characters please :)";
+        };
       };
     };
   };
