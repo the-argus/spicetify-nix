@@ -12,8 +12,8 @@
     {
       homeManagerModule = import ./module.nix;
 
-      lib = import ./lib { inherit pkgs lib; };
+      lib = import ./lib { inherit pkgs; lib = pkgs.lib; };
 
-      pkgs = import ./pkgs { inherit pkgs lib; };
+      pkgs = import ./pkgs { inherit pkgs; lib = pkgs.lib; };
     };
 }
