@@ -147,7 +147,7 @@ let
           '';
       };
       name = mkOption {
-        types = types.nullOr types.str;
+        type = types.nullOr types.str;
         description = "Name of the app. No spaces or special characters please :)";
       };
       appendName = mkOption { type = types.bool; default = true; };
