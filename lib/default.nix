@@ -21,7 +21,7 @@ in
 
   createXpuiINI = xpui: (customToINI xpui);
 
-  getThemePath = theme: (if theme.appendName then ${theme.src}/${theme.name} else theme.src);
+  getThemePath = theme: (if theme.appendName then /${theme.src}/${theme.name} else theme.src);
 
   # same thing but if its a string it looks it up in the default pkgs
   getTheme = theme:
