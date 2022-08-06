@@ -68,9 +68,9 @@ in
 
     # legacy/ease of use options (commonly set for themes like Dribbblish)
     # injectCss = xpui.Setting.inject_css;
-    injectCss = xpui.Setting.inject_css;
-    replaceColors = xpui.Setting.replace_colors;
-    overwriteAssets = xpui.Setting.overwrite_assets;
+    injectCss = spiceTypes.xpui.Setting.inject_css;
+    replaceColors = spiceTypes.xpui.Setting.replace_colors;
+    overwriteAssets = spiceTypes.xpui.Setting.overwrite_assets;
   };
 
   config = mkIf cfg.enable {
@@ -81,7 +81,19 @@ in
         extensionString = pipeConcat cfg.enabledExtensions;
         customAppsString = pipeConcat cfg.enabledCustomApps;
 
-        config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI cfg.xpui);
+        xpuiOverrides = {
+          Setting = {
+            inject_css = cfg.injectCss;
+            replace_colors = cfg.replaceColors;
+            overwrite_assets = cfg.overwriteAssets;
+          };
+        };
+
+        overridenXpui = builtins.mapAttrs
+          (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
+          xpuiOverrides;
+
+        config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui);
 
         # INI created, now create the postInstall that runs spicetify
         inherit (pkgs.lib.lists) foldr;
