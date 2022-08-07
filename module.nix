@@ -159,21 +159,21 @@ in
 
       extensionCommands = lineBreakConcat (map
         (item:
-          "cp -r ${item.src}/${item.filename} ./Extensions/${item.filename}"
+        let
+          command = "cp -r ${item.src}/${item.filename} ./Extensions/${item.filename}";
+        in
+        "${command} && echo \"${command}\""
         )
         allExtensions);
 
       customAppCommands = lineBreakConcat (map
-        (item:
-        let
-          command ="cp -rn ${(if (builtins.hasAttr "appendName" item) then
+        (item: "cp -rn ${(if (builtins.hasAttr "appendName" item) then
                 if (item.appendName) then
                     "${item.src}/${item.name}"
                 else
                 "${item.src}"
-            else "${item.src}")} ./CustomApps/${item.name}";
-        in
-          "${command} && echo \"${command}\"")
+            else
+              "${item.src}")} ./CustomApps/${item.name}";
         allApps);
 
       spicetify = "${cfg.spicetifyPackage}/bin/spicetify-cli --no-restart";
