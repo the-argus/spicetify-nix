@@ -34,8 +34,8 @@ in
   getTheme = theme:
     if builtins.typeOf theme == "string" then
       (
-        if builtins.hasAttr theme spicePkgs.official.themes then
-          spicePkgs.official.themes.${theme}
+        if builtins.hasAttr theme spicePkgs.themes then
+          spicePkgs.themes.${theme}
         else
           throw "Unknown theme ${theme}. Try using the lib.theme type instead of a string."
       )
@@ -44,8 +44,8 @@ in
   getExtension = ext:
     if builtins.typeOf ext == "string" then
       (
-        if builtins.hasAttr ext spicePkgs.official.extensions then
-          spicePkgs.official.extensions.${ext}
+        if builtins.hasAttr ext spicePkgs.extensions then
+          spicePkgs.extensions.${ext}
         else
           throw "Unknown extension ${ext}. Try using the lib.extension type instead of a string."
       )
@@ -55,8 +55,8 @@ in
   getApp = app:
     if builtins.typeOf app == "string" then
       (
-        if builtins.hasAttr app spicePkgs.official.apps then
-          spicePkgs.official.apps.${app}
+        if builtins.hasAttr app spicePkgs.apps then
+          spicePkgs.apps.${app}
         else
           throw "Unknown CustomApp ${app}. Try using the lib.app type instead of a string."
       )

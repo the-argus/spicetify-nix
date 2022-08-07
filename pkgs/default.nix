@@ -18,8 +18,7 @@ let
     filename = "dribbblish.js";
     src = "${officialThemes}/Dribbblish";
   };
-in
-{
+
   official = {
     themes =
       let
@@ -38,6 +37,7 @@ in
           replaceColors = true;
           overwriteAssets = true;
           appendName = true;
+          sidebarConfig = true;
         };
       } //
       mkOfficialTheme "Ziro" //
@@ -80,4 +80,13 @@ in
       };
     };
   };
+in
+{
+  inherit official;
+  themes = {
+  } // official.themes;
+  extensions = {
+  } // official.extensions;
+  apps = {
+  } // official.apps;
 }
