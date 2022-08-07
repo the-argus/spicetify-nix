@@ -162,7 +162,7 @@ in
         let
           command = "cp -r ${item.src}/${item.filename} ./Extensions/${item.filename}";
         in
-        "${command} && echo \"${command}\""
+        "${command} && echo \"Cp command for ${item.filename} succeeded!\""
         )
         allExtensions);
 
@@ -235,7 +235,7 @@ in
 
       # custom spotify package with spicetify integrated in
       spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
-        postInstall = trace finalScript finalScript;
+        postInstall = finalScript;
       });
     in
     mkIf cfg.enable {
