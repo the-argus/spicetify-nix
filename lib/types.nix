@@ -61,7 +61,7 @@ let
   extension = types.submodule {
     options = {
       src = mkOption {
-        type = types.path;
+        type = types.oneOf [ types.path types.str ];
         description = "Path to the folder which contains the .js file.";
       };
       filename = mkOption {
@@ -80,7 +80,7 @@ let
         example = ''Dribbblish'';
       };
       src = mkOption {
-        type = types.path;
+        type = types.oneOf [ types.path types.str ];
         description = "Path to folder containing the theme.";
         example = ''pkgs.fetchgit {
                       url = "https://github.com/spicetify/spicetify-themes";
@@ -135,7 +135,7 @@ let
   app = types.submodule {
     options = {
       src = mkOption {
-        type = types.str;
+        type = types.oneOf [ types.path types.str ];
         description = "Path to the folder containing the app code.";
         example =
           ''
