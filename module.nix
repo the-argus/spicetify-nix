@@ -96,7 +96,7 @@ in
         mkXpuiOverrides =
           let
             createBoolOverride = set: attrName: cfgName:
-              if (builtins.hasAttr attrName set) then
+              if (set.${attrName} != null) then 
                 (if (builtins.typeOf set.${attrName} == "bool") then
                   { cfgName = set.${attrName}; }
                 else
