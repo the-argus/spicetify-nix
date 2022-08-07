@@ -96,7 +96,7 @@ in
         mkXpuiOverrides =
           let
             createBoolOverride = set: attrName: cfgName:
-              if builtins.hasAttr attrName set then
+              if (builtins.hasAttr attrName set) then
                 let
                   cfgVal = set.${attrName};
                 in
@@ -107,7 +107,7 @@ in
               else
                 { };
             createOverride = set: attrName: cfgName:
-              if builtins.hasAttr attrName set then
+              if (builtins.hasAttr attrName set) then
                 { cfgName = set.${attrName}; }
               else
                 { };
@@ -118,7 +118,7 @@ in
               custom_apps = customAppsString;
             };
             Setting = { }
-              // (if builtins.hasAttr "injectCss" container then (createBoolOverride container "injectCss" "inject_css") else {})
+              // createBoolOverride container "injectCss" "inject_css"
               // createBoolOverride container "replaceColors" "replace_colors"
               // createBoolOverride container "overwriteAssets" "overwrite_assets"
               // createBoolOverride container "sidebarConfig" "sidebar_config"
