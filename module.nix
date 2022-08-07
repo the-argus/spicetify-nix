@@ -178,9 +178,9 @@ in
       theme = spiceLib.getTheme cfg.theme;
       themePath = spiceLib.getThemePath theme;
 
-      customColorSchemeINI = builtins.toFile "dummy-color.ini"
-        spiceLib.createXpuiINI
-        { custom = cfg.customColorScheme; };
+      customColorSchemeINI = (builtins.toFile "dummy-color.ini"
+        (spiceLib.createXpuiINI
+        { custom = cfg.customColorScheme; }));
 
       customColorSchemeScript = if (cfg.customColorScheme != null) then ''
         COLORINI=./Themes/${actualTheme.name}/color.ini
