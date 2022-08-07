@@ -156,7 +156,7 @@ in
       extensionCommands = lineBreakConcat (map
         (item:
         let
-          command = "cp -r ${item.src}/${item.filename} ./Extensions/${item.filename}";
+          command = "cp -rn ${item.src}/${item.filename} ./Extensions/${item.filename}";
         in
         "${command} && echo \"Cp command for ${item.filename} succeeded!\""
         )
