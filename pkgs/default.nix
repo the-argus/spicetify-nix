@@ -127,14 +127,34 @@ let
       };
     };
   };
+
+  spotifyNoPremiumSrc = pkgs.fetchgit {
+    url = "https://github.com/Daksh777/SpotifyNoPremium";
+    rev = "a2daa7a9ec3e21ebba3c6ab0ad1eb5bd8e51a3ca";
+    sha256 = "1sr6pjaygxxx6majmk5zg8967jry53z6xd6zc31ns2g4r5sy4k8d";
+  };
+
+  adblock = {
+    src = spotifyNoPremiumSrc;
+    filename = "adblock.js";
+  };
 in
 {
   inherit official;
-  themes = { } // official.themes
+  themes = {
+    SpotifyNoPremium = {
+      name = "SpotifyNoPremium";
+      src = spotifyNoPremiumSrc;
+      appendName = false;
+      requiredExtensions = [ adblock ];
+    };
+  } // official.themes
   // mkCatpuccinTheme "catpuccin-mocha"
   // mkCatpuccinTheme "catpuccin-frappe"
   // mkCatpuccinTheme "catpuccin-latte"
   // mkCatpuccinTheme "catpuccin-macchiato";
-  extensions = { } // official.extensions;
+  extensions = {
+    "adblock.js" = adblock;
+  } // official.extensions;
   apps = { } // official.apps;
 }
