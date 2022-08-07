@@ -225,6 +225,9 @@ in
         ${customColorSchemeScript}
             
         ${cfg.extraCommands}
+
+        # extra commands that the theme might need
+        ${if actualTheme.extraCommands != null then actualTheme.extraCommands else ""}
         popd
         ${spicetify} backup apply
             

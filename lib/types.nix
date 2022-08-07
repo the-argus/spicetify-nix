@@ -116,6 +116,12 @@ let
         description = "INI entries to add in the [Patch] section of config-xpui.ini";
       };
 
+      extraCommands = mkOption {
+        type = types.nullOr types.lines;
+        default = null;
+        description = "A bash script to run from the spicetify config directory if this theme is installed.";
+      };
+
       # some config values that can be specified per-theme
       injectCss = mkOption {
         type = types.nullOr types.bool;

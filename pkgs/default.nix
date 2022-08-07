@@ -138,6 +138,35 @@ let
     src = spotifyNoPremiumSrc;
     filename = "adblock.js";
   };
+
+  comfySrc = pkgs.fetchgit {
+    url = "https://github.com/Comfy-Themes/Spicetify";
+    rev = "45830ed853cc212dec0c053deb34da6aefc25ce5";
+    sha256 = "1hb9f1nwf0jw5yvrzy2bshpb89h1aaysf18zvs0g5fmhmvn7ba6s";
+  };
+
+  mkComfyTheme = name: {
+    ${name} = 
+    let lname = lib.strings.toLower name; in {
+      inherit name;
+      src = comfySrc;
+      appendName = true;
+      injectCss = true;
+      replaceColors = true;
+      overwriteAssets = true;
+      requiredExtensions = [
+        {
+            src = "${comfySrc}/${name}";
+            filename = "${lname}.js";
+        }
+      ];
+      extraCommands = ''
+        # remove the auto-update functionality
+        echo "\n" >> ./Extensions/${lname}.js
+        cat ./Themes/${name}/${lname}.script.js >> ./Extensions/${lname}.js
+      '';
+    };
+};
 in
 {
   inherit official;
@@ -152,7 +181,10 @@ in
   // mkCatpuccinTheme "catpuccin-mocha"
   // mkCatpuccinTheme "catpuccin-frappe"
   // mkCatpuccinTheme "catpuccin-latte"
-  // mkCatpuccinTheme "catpuccin-macchiato";
+  // mkCatpuccinTheme "catpuccin-macchiato"
+  // mkComfyTheme "Comfy"
+  // mkComfyTheme "Comfy-Chromatic"
+  // mkComfyTheme "Comfy-Mono";
   extensions = {
     "adblock.js" = adblock;
   } // official.extensions;
