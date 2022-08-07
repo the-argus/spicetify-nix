@@ -111,9 +111,9 @@ let
     name = "Fluent";
     src = fluentSrc;
     appendName = false;
-    injectCss = 1;
-    overwriteAssets = 1;
-    replaceColors = 1;
+    injectCss = true;
+    overwriteAssets = true;
+    replaceColors = true;
     patches = {
       "xpui.js_find_8008" = ",(\\w+=)32";
       "xpui.js_repl_8008" = ",$\{1}56";
