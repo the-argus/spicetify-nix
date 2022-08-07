@@ -134,9 +134,9 @@ in
           (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
           (mkXpuiOverrides actualTheme createBoolOverrideFromSubmodule);
         # override any values defined by the theme with values defined in cfg
-        overridenXpui2 = builtins.mapAttrs
+        overridenXpui2 = trace (builtins.toString cfg) (builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
-          (mkXpuiOverrides cfg createBoolOverride);
+          (mkXpuiOverrides cfg createBoolOverride));
 
         config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
 
