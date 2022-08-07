@@ -101,8 +101,8 @@ in
         # have to have two different override functions for each case
         # (one value is null while the other is undefined...)
         createBoolOverride = set: attrName: cfgName:
-          ifTrue (set.${attrName} != null && builtins.typeOf set.${attrName} == "bool")
-            { cfgName = set.${attrName}; };
+          ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName}) == "bool" 
+            { cfgName = set.${attrName}; });
         createBoolOverrideFromSubmodule = set: attrName: cfgName:
           ifTrue (builtins.hasAttr attrName set)
             (ifTrue (builtins.typeOf set.${attrName} == "bool")
@@ -132,11 +132,11 @@ in
         # override any values defined by the user in cfg.xpui with values defined by the theme
         overridenXpui1 = builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
-          (mkXpuiOverrides actualTheme createBoolOverride);
+          (mkXpuiOverrides actualTheme createBoolOverrideFromSubmodule);
         # override any values defined by the theme with values defined in cfg
         overridenXpui2 = builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
-          (mkXpuiOverrides cfg createBoolOverrideFromSubmodule);
+          (mkXpuiOverrides cfg createBoolOverride);
 
         config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
 
