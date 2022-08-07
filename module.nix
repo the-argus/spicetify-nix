@@ -106,11 +106,11 @@ in
         # (one value is null while the other is undefined...)
         createBoolOverride = set: attrName: cfgName:
           ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool") 
-            { "${cfgName}" = set.${attrName}; });
+            { cfgName = set.${attrName}; });
         createBoolOverrideFromSubmodule = set: attrName: cfgName:
           ifTrue (builtins.hasAttr attrName set)
             (ifTrue (builtins.typeOf set.${attrName} == "bool")
-              { "${cfgName}" = set.${attrName}; });
+              { cfgName = set.${attrName}; });
 
         mkXpuiOverrides =
           let
@@ -133,6 +133,8 @@ in
               # and turn the theme into a string of its name
               // (ifTrue (container == cfg) (createOverride container "theme" actualTheme.name));
             Patch = (ifTrue (container == actualTheme) actualTheme.patches);
+            Backup = {}
+              // (ifTrue (container == cfg) (createOverride container "Version" (cfg.spotifyPackage.version or "Unknown")));
           };
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
