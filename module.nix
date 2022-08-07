@@ -137,7 +137,7 @@ in
             // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"))
             # and turn the theme into a string of its name
             // (ifTrue (container == cfg) { current_theme = actualTheme.name; });
-          Patch = (ifTrue (container == actualTheme) actualTheme.patches);
+          Patch = (ifTrue (container == actualTheme) (ifTrue (builtins.hasAttr "patches" actualTheme) actualTheme.patches));
           Backup = { version = (cfg.spotifyPackage.version or "Unknown"); };
         };
 
