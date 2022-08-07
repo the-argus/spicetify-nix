@@ -134,7 +134,7 @@ in
               // (ifTrue (container == cfg) (createOverride container "theme" actualTheme.name));
             Patch = (ifTrue (container == actualTheme) actualTheme.patches);
             Backup = {}
-              // (ifTrue (container == cfg) (createOverride container "Version" (cfg.spotifyPackage.version or "Unknown")));
+              // (ifTrue (container == cfg) (createOverride container "version" (cfg.spotifyPackage.version or "Unknown")));
           };
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
