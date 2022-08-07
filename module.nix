@@ -131,7 +131,7 @@ in
               # also add the colorScheme as an override if defined in cfg
               // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"))
               # and turn the theme into a string of its name
-              // (ifTrue (container == cfg) (createOverride container "theme" actualTheme.name));
+              // (ifTrue (container == cfg) { current_theme = actualTheme.name; });
             Patch = (ifTrue (container == actualTheme) actualTheme.patches);
             Backup = { version = (cfg.spotifyPackage.version or "Unknown"); };
           };
