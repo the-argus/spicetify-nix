@@ -225,11 +225,12 @@ in
         ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
 
         # extra commands that the theme might need
-        ${ifTrue (builtins.hasAttr "extraCommands" actualTheme)
+        ${if (builtins.hasAttr "extraCommands" actualTheme) then
             (if actualTheme.extraCommands != null then
               actualTheme.extraCommands
             else
-              "")}
+              "")
+          else ""}
         popd
         ${spicetify} backup apply
             
