@@ -234,7 +234,7 @@ in
 
       # custom spotify package with spicetify integrated in
       spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
-        postInstall = finalScript;
+        postInstall = trace finalScript finalScript;
       });
     in
     mkIf cfg.enable {
