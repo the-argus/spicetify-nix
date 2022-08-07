@@ -180,53 +180,57 @@ in
 
       customColorSchemeINI = (builtins.toFile "dummy-color.ini"
         (spiceLib.createXpuiINI
-        { custom = cfg.customColorScheme; }));
+          { custom = cfg.customColorScheme; }));
 
-      customColorSchemeScript = if (cfg.customColorScheme != null) then ''
-        COLORINI=./Themes/${actualTheme.name}/color.ini
-        if [ -e $COLORINI ]; then
-            # finally, use cat for its actual purpose: concatenation
-            cat ${customColorSchemeINI} >> $COLORINI
-        fi
-      '' else "";
+      customColorSchemeScript =
+        if (cfg.customColorScheme != null) then ''
+          COLORINI=./Themes/${actualTheme.name}/color.ini
+          if [ -e $COLORINI ]; then
+              # finally, use cat for its actual purpose: concatenation
+              cat ${customColorSchemeINI} >> $COLORINI
+          fi
+        '' else "";
+
+      finalScript = ''
+        export SPICETIFY_CONFIG=$out/spicetify
+        mkdir -p $SPICETIFY_CONFIG
+        pushd $SPICETIFY_CONFIG
+                
+        # create config and prefs
+        cp ${config-xpui} config-xpui.ini
+        ${pkgs.coreutils-full}/bin/chmod a+wr config-xpui.ini
+        touch $out/share/spotify/prefs
+                
+        # replace the spotify path with the current derivation's path
+        sed -i "s|__REPLACEME__|$out/share/spotify|g" config-xpui.ini
+        sed -i "s|__REPLACEME2__|$out/share/spotify/prefs|g" config-xpui.ini
+            
+        mkdir -p Themes
+        mkdir -p Extensions
+        mkdir -p CustomApps
+        cp -r ${themePath} ./Themes/${theme.name}
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
+        # copy extensions into Extensions folder
+        ${extensionCommands}
+        # copy custom apps into CustomApps folder
+        ${customAppCommands}
+        # add a custom color scheme if necessary
+        ${customColorSchemeScript}
+            
+        ${cfg.extraCommands}
+        popd
+        ${spicetify} backup apply
+            
+        # fix config to point to home directory (not necessary I don't think, but whatever)
+        # sed -i "s|$out/share/spotify/prefs|${config.home.homeDirectory}/.config/spotify/prefs|g" $SPICETIFY_CONFIG/config-xpui.ini
+      '';
+
 
       # custom spotify package with spicetify integrated in
       spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
-        postInstall = ''
-          export SPICETIFY_CONFIG=$out/spicetify
-          mkdir -p $SPICETIFY_CONFIG
-          pushd $SPICETIFY_CONFIG
-                
-          # create config and prefs
-          cp ${config-xpui} config-xpui.ini
-          ${pkgs.coreutils-full}/bin/chmod a+wr config-xpui.ini
-          touch $out/share/spotify/prefs
-                
-          # replace the spotify path with the current derivation's path
-          sed -i "s|__REPLACEME__|$out/share/spotify|g" config-xpui.ini
-          sed -i "s|__REPLACEME2__|$out/share/spotify/prefs|g" config-xpui.ini
-            
-          mkdir -p Themes
-          mkdir -p Extensions
-          mkdir -p CustomApps
-          cp -r ${themePath} ./Themes/${theme.name}
-          ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
-          ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
-          ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
-          # copy extensions into Extensions folder
-          ${extensionCommands}
-          # copy custom apps into CustomApps folder
-          ${customAppCommands}
-          # add a custom color scheme if necessary
-          ${customColorSchemeScript}
-            
-          ${cfg.extraCommands}
-          popd
-          ${spicetify} backup apply
-            
-          # fix config to point to home directory (not necessary I don't think, but whatever)
-          # sed -i "s|$out/share/spotify/prefs|${config.home.homeDirectory}/.config/spotify/prefs|g" $SPICETIFY_CONFIG/config-xpui.ini
-        '';
+        postInstall = trace finalScript finalScript;
       });
     in
     mkIf cfg.enable {
