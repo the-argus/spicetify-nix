@@ -101,7 +101,7 @@ in
         # have to have two different override functions for each case
         # (one value is null while the other is undefined...)
         createBoolOverride = set: attrName: cfgName:
-          ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool") 
+          ifTrue ((set.${attrName} or null) != null) (ifTrue (builtins.typeOf set.${attrName} == "bool") 
             { cfgName = set.${attrName}; });
         createBoolOverrideFromSubmodule = set: attrName: cfgName:
           ifTrue (builtins.hasAttr attrName set)
