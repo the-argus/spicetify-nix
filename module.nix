@@ -74,150 +74,158 @@ in
     colorScheme = mkOption { type = lib.types.nullOr lib.types.str; default = null; };
   };
 
-  config = mkIf cfg.enable {
-    # install necessary packages for this user
-    home.packages = with cfg;
-      let
-        actualTheme = spiceLib.getTheme cfg.theme;
+  config =
+    let
+      actualTheme = spiceLib.getTheme cfg.theme;
 
-        # helper functions
-        pipeConcat = foldr (a: b: a + "|" + b) "";
-        lineBreakConcat = foldr (a: b: a + "\n" + b) "";
+      # helper functions
+      pipeConcat = foldr (a: b: a + "|" + b) "";
+      lineBreakConcat = foldr (a: b: a + "\n" + b) "";
 
-        # take the list of extensions and turn strings into actual extensions
-        allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
-          (if builtins.typeOf cfg.theme == "set" then
-            (if builtins.hasAttr "requiredExtensions" cfg.theme then
-              cfg.theme.requiredExtensions
-            else
-              [ ]
-            ) else [ ]
-          ) ++ cfg.xpui.AdditionalOptions.extensions);
-        allExtensionFiles = map (item: item.filename) allExtensions;
-        extensionString = pipeConcat allExtensionFiles;
+      # take the list of extensions and turn strings into actual extensions
+      allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
+        (if builtins.typeOf cfg.theme == "set" then
+          (if builtins.hasAttr "requiredExtensions" cfg.theme then
+            cfg.theme.requiredExtensions
+          else
+            [ ]
+          ) else [ ]
+        ) ++ cfg.xpui.AdditionalOptions.extensions);
+      allExtensionFiles = map (item: item.filename) allExtensions;
+      extensionString = pipeConcat allExtensionFiles;
 
-        # do the same thing again but for customapps this time
-        allApps = map spiceLib.getApp (cfg.enabledCustomApps ++ cfg.xpui.AdditionalOptions.custom_apps);
-        allAppsNames = map (item: item.name) allApps;
-        customAppsString = pipeConcat allAppsNames;
+      # do the same thing again but for customapps this time
+      allApps = map spiceLib.getApp (cfg.enabledCustomApps ++ cfg.xpui.AdditionalOptions.custom_apps);
+      allAppsNames = map (item: item.name) allApps;
+      customAppsString = pipeConcat allAppsNames;
 
-        # cfg.theme.injectCss is a submodule but cfg.injectCss is not, so we
-        # have to have two different override functions for each case
-        # (one value is null while the other is undefined...)
-        createBoolOverride = set: attrName: cfgName:
-          ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool")
-            { cfgName = set.${attrName}; });
-        createBoolOverrideFromSubmodule = set: attrName: cfgName:
-          ifTrue (builtins.hasAttr attrName set)
-            (ifTrue (builtins.typeOf set.${attrName} == "bool")
-              { ${cfgName} = set.${attrName}; });
+      # cfg.theme.injectCss is a submodule but cfg.injectCss is not, so we
+      # have to have two different override functions for each case
+      # (one value is null while the other is undefined...)
+      createBoolOverride = set: attrName: cfgName:
+        ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool")
+          { cfgName = set.${attrName}; });
+      createBoolOverrideFromSubmodule = set: attrName: cfgName:
+        ifTrue (builtins.hasAttr attrName set)
+          (ifTrue (builtins.typeOf set.${attrName} == "bool")
+            { ${cfgName} = set.${attrName}; });
 
-        mkXpuiOverrides =
-          let
-            createOverride = set: attrName: cfgName:
-              ifTrue (set.${attrName} != null)
-                { ${cfgName} = set.${attrName}; };
-          in
-          container: boolOverrideFunc: {
-            AdditionalOptions = {
-              extensions = extensionString;
-              custom_apps = customAppsString;
-            };
-            Setting = { }
-              // boolOverrideFunc container "injectCss" "inject_css"
-              // boolOverrideFunc container "replaceColors" "replace_colors"
-              // boolOverrideFunc container "overwriteAssets" "overwrite_assets"
-              // boolOverrideFunc container "sidebarConfig" "sidebar_config"
-              # also add the colorScheme as an override if defined in cfg
-              // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"))
-              # and turn the theme into a string of its name
-              // (ifTrue (container == cfg) { current_theme = actualTheme.name; });
-            Patch = (ifTrue (container == actualTheme) actualTheme.patches);
-            Backup = { version = (cfg.spotifyPackage.version or "Unknown"); };
+      mkXpuiOverrides =
+        let
+          createOverride = set: attrName: cfgName:
+            ifTrue (set.${attrName} != null)
+              { ${cfgName} = set.${attrName}; };
+        in
+        container: boolOverrideFunc: {
+          AdditionalOptions = {
+            extensions = extensionString;
+            custom_apps = customAppsString;
           };
+          Setting = { }
+            // boolOverrideFunc container "injectCss" "inject_css"
+            // boolOverrideFunc container "replaceColors" "replace_colors"
+            // boolOverrideFunc container "overwriteAssets" "overwrite_assets"
+            // boolOverrideFunc container "sidebarConfig" "sidebar_config"
+            # also add the colorScheme as an override if defined in cfg
+            // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"))
+            # and turn the theme into a string of its name
+            // (ifTrue (container == cfg) { current_theme = actualTheme.name; });
+          Patch = (ifTrue (container == actualTheme) actualTheme.patches);
+          Backup = { version = (cfg.spotifyPackage.version or "Unknown"); };
+        };
 
-        # override any values defined by the user in cfg.xpui with values defined by the theme
-        overridenXpui1 = builtins.mapAttrs
-          (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
-          (mkXpuiOverrides actualTheme createBoolOverrideFromSubmodule);
-        # override any values defined by the theme with values defined in cfg
-        setToString = set: lineBreakConcat (lib.attrsets.mapAttrsToList (name: value: "${name}") set);
-        overridenXpui2 = trace (setToString cfg) (builtins.mapAttrs
-          (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
-          (mkXpuiOverrides cfg createBoolOverride));
+      # override any values defined by the user in cfg.xpui with values defined by the theme
+      overridenXpui1 = builtins.mapAttrs
+        (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
+        (mkXpuiOverrides actualTheme createBoolOverrideFromSubmodule);
+      # override any values defined by the theme with values defined in cfg
+      setToString = set: lineBreakConcat (lib.attrsets.mapAttrsToList (name: value: "${name}") set);
+      overridenXpui2 = trace (setToString cfg) (builtins.mapAttrs
+        (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
+        (mkXpuiOverrides cfg createBoolOverride));
 
-        config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
+      config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
 
-        # INI created, now create the postInstall that runs spicetify
-        inherit (pkgs.lib.lists) foldr;
-        inherit (pkgs.lib.attrsets) mapAttrsToList;
+      # INI created, now create the postInstall that runs spicetify
+      inherit (pkgs.lib.lists) foldr;
+      inherit (pkgs.lib.attrsets) mapAttrsToList;
 
-        extensionCommands = lineBreakConcat (map
-          (item:
-            "cp -r ${item.src}/${item.filename} ./Extensions/${item.filename}"
-          )
-          allExtensions);
+      extensionCommands = lineBreakConcat (map
+        (item:
+          "cp -r ${item.src}/${item.filename} ./Extensions/${item.filename}"
+        )
+        allExtensions);
 
-        customAppCommands = lineBreakConcat (map
-          (item:
-            "cp -r ${(if (builtins.hasAttr "appendName" item) then
+      customAppCommands = lineBreakConcat (map
+        (item:
+          "cp -r ${(if (builtins.hasAttr "appendName" item) then
                 if (item.appendName) then
                     "${item.src}/${item.name}"
                 else
                 "${item.src}"
             else "${item.src}")} ./CustomApps/${item.name}")
-          allApps);
+        allApps);
 
-        spicetify = "${cfg.spicetifyPackage}/bin/spicetify-cli --no-restart";
+      spicetify = "${cfg.spicetifyPackage}/bin/spicetify-cli --no-restart";
 
-        theme = spiceLib.getTheme cfg.theme;
-        themePath = spiceLib.getThemePath theme;
+      theme = spiceLib.getTheme cfg.theme;
+      themePath = spiceLib.getThemePath theme;
 
-        # custom spotify package with spicetify integrated in
-        spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
-          postInstall = ''
-            export SPICETIFY_CONFIG=$out/spicetify
-            mkdir -p $SPICETIFY_CONFIG
-            pushd $SPICETIFY_CONFIG
+      # custom spotify package with spicetify integrated in
+      spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
+        postInstall = ''
+          export SPICETIFY_CONFIG=$out/spicetify
+          mkdir -p $SPICETIFY_CONFIG
+          pushd $SPICETIFY_CONFIG
                 
-            # create config and prefs
-            cp ${config-xpui} config-xpui.ini
-            ${pkgs.coreutils-full}/bin/chmod a+wr config-xpui.ini
-            touch $out/share/spotify/prefs
+          # create config and prefs
+          cp ${config-xpui} config-xpui.ini
+          ${pkgs.coreutils-full}/bin/chmod a+wr config-xpui.ini
+          touch $out/share/spotify/prefs
                 
-            # replace the spotify path with the current derivation's path
-            sed -i "s|__REPLACEME__|$out/share/spotify|g" config-xpui.ini
-            sed -i "s|__REPLACEME2__|$out/share/spotify/prefs|g" config-xpui.ini
+          # replace the spotify path with the current derivation's path
+          sed -i "s|__REPLACEME__|$out/share/spotify|g" config-xpui.ini
+          sed -i "s|__REPLACEME2__|$out/share/spotify/prefs|g" config-xpui.ini
             
-            mkdir -p Themes
-            mkdir -p Extensions
-            mkdir -p CustomApps
-            cp -r ${themePath} ./Themes/${theme.name}
-            ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
-            # copy extensions into Extensions folder
-            ${extensionCommands}
-            # copy custom apps into CustomApps folder
-            ${customAppCommands}
+          mkdir -p Themes
+          mkdir -p Extensions
+          mkdir -p CustomApps
+          cp -r ${themePath} ./Themes/${theme.name}
+          ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
+          # copy extensions into Extensions folder
+          ${extensionCommands}
+          # copy custom apps into CustomApps folder
+          ${customAppCommands}
             
-            ${cfg.extraCommands}
-            popd
-            ${spicetify} backup apply
+          ${cfg.extraCommands}
+          popd
+          ${spicetify} backup apply
             
-            # fix config to point to home directory (not necessary I don't think, but whatever)
-            # sed -i "s|$out/share/spotify/prefs|${config.home.homeDirectory}/.config/spotify/prefs|g" $SPICETIFY_CONFIG/config-xpui.ini
-          '';
-        });
-      in
-      [
-        spiced-spotify
-        cfg.spicetifyPackage
-      ] ++
-      # need montserrat for the BurntSienna theme
-      (ifTrueList
-        (cfg.theme == "BurntSienna" ||
-        cfg.theme == spicePkgs.official.themes.BurntSienna)
-        [ pkgs.montserrat ]
-      );
-  };
+          # fix config to point to home directory (not necessary I don't think, but whatever)
+          # sed -i "s|$out/share/spotify/prefs|${config.home.homeDirectory}/.config/spotify/prefs|g" $SPICETIFY_CONFIG/config-xpui.ini
+        '';
+      });
+    in
+    mkIf cfg.enable {
+      # install necessary packages for this user
+      home.packages = with cfg;
+        [
+          spiced-spotify
+          cfg.spicetifyPackage
+        ] ++
+        # need montserrat for the BurntSienna theme
+        (ifTrueList
+          (cfg.theme == "BurntSienna" ||
+          cfg.theme == spicePkgs.official.themes.BurntSienna)
+          [ pkgs.montserrat ]
+        );
+
+      home.file = {
+        ".config/spicetify" = {
+          source = "${spiced-spotify}/spicetify";
+          recursive = true;
+        };
+      };
+    };
 }
 
