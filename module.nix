@@ -79,7 +79,11 @@ in
     home.packages = with cfg;
       let
         actualTheme = spiceLib.getTheme cfg.theme;
+        
+        # helper functions
         pipeConcat = foldr (a: b: a + "|" + b) "";
+        lineBreakConcat = foldr (a: b: a + "\n" + b) "";
+
         # take the list of extensions and turn strings into actual extensions
         allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
           (if builtins.typeOf cfg.theme == "set" then
@@ -134,7 +138,8 @@ in
           (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
           (mkXpuiOverrides actualTheme createBoolOverrideFromSubmodule);
         # override any values defined by the theme with values defined in cfg
-        overridenXpui2 = trace (builtins.toString cfg) (builtins.mapAttrs
+        setToString = set: lineBreakConcat (lib.attrsets.mapAttrsToList (name: value: "${name}") set);
+        overridenXpui2 = trace (setToString cfg) (builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
           (mkXpuiOverrides cfg createBoolOverride));
 
@@ -143,9 +148,6 @@ in
         # INI created, now create the postInstall that runs spicetify
         inherit (pkgs.lib.lists) foldr;
         inherit (pkgs.lib.attrsets) mapAttrsToList;
-
-        # Helper functions
-        lineBreakConcat = foldr (a: b: a + "\n" + b) "";
 
         extensionCommands = lineBreakConcat (map
           (item:
