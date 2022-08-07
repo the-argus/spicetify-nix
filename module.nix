@@ -210,9 +210,6 @@ in
         mkdir -p CustomApps
         cp -r ${themePath} ./Themes/${theme.name}
         echo "copied theme"
-        ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
-        ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
-        ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
         # copy extensions into Extensions folder
         ${extensionCommands}
         # copy custom apps into CustomApps folder
@@ -222,6 +219,10 @@ in
         ${customColorSchemeScript}
         # completed custom color scheme addition 
         ${cfg.extraCommands}
+        
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
 
         # extra commands that the theme might need
         ${if actualTheme.extraCommands != null then actualTheme.extraCommands else ""}
@@ -235,7 +236,7 @@ in
 
       # custom spotify package with spicetify integrated in
       spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
-        postInstall = trace finalScript finalScript;
+        postInstall = finalScript;
       });
     in
     mkIf cfg.enable {
