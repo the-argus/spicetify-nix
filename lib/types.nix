@@ -106,7 +106,7 @@ let
       };
 
       patches = mkOption {
-        type = types.nullOr types.attrs;
+        type = types.attrs;
         example = ''
           {
               "xpui.js_find_8008" = ",(\\w+=)32";
@@ -114,6 +114,7 @@ let
           };
         '';
         description = "INI entries to add in the [Patch] section of config-xpui.ini";
+        default = {};
       };
 
       extraCommands = mkOption {
