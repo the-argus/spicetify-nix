@@ -219,12 +219,8 @@ in
           cfg.theme == spicePkgs.official.themes.BurntSienna)
           [ pkgs.montserrat ]
         );
-
-      home.file = {
-        ".config/spicetify" = {
-          source = "${spiced-spotify}/spicetify";
-          recursive = true;
-        };
+      home.sessionVariables = {
+        SPICETIFY_CONFIG = "${spiced-spotify}/spicetify";
       };
     };
 }
