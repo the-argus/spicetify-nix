@@ -106,11 +106,11 @@ in
         # (one value is null while the other is undefined...)
         createBoolOverride = set: attrName: cfgName:
           ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool") 
-            { cfgName = set.${attrName}; });
+            { ${cfgName} = set.${attrName}; });
         createBoolOverrideFromSubmodule = set: attrName: cfgName:
           ifTrue (builtins.hasAttr attrName set)
             (ifTrue (builtins.typeOf set.${attrName} == "bool")
-              { cfgName = set.${attrName}; });
+              { ${cfgName} = set.${attrName}; });
 
         mkXpuiOverrides =
           let
