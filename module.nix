@@ -91,9 +91,9 @@ in
 
       # take the list of extensions and turn strings into actual extensions
       allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
-          (ifTrueList (builtins.hasAttr "requiredExtensions" actualTheme)
-            actualTheme.requiredExtensions
-          ) ++ cfg.xpui.AdditionalOptions.extensions);
+        (ifTrueList (builtins.hasAttr "requiredExtensions" actualTheme)
+          actualTheme.requiredExtensions
+        ) ++ cfg.xpui.AdditionalOptions.extensions);
       allExtensionFiles = map (item: item.filename) allExtensions;
       extensionString = pipeConcat allExtensionFiles;
 
@@ -155,10 +155,10 @@ in
 
       extensionCommands = lineBreakConcat (map
         (item:
-        let
-          command = "cp -rn ${item.src}/${item.filename} ./Extensions/${item.filename}";
-        in
-        "${command} && echo \"Cp command for ${item.filename} succeeded!\""
+          let
+            command = "cp -rn ${item.src}/${item.filename} ./Extensions/${item.filename}";
+          in
+          "${command} && echo \"Cp command for ${item.filename} succeeded!\""
         )
         allExtensions);
 
@@ -225,7 +225,11 @@ in
         ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
 
         # extra commands that the theme might need
-        ${if actualTheme.extraCommands != null then actualTheme.extraCommands else ""}
+        ${ifTrue (builtins.hasAttr "extraCommands" actualTheme)
+            (if actualTheme.extraCommands != null then
+              actualTheme.extraCommands
+            else
+              "")}
         popd
         ${spicetify} backup apply
             
