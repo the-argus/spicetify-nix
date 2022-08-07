@@ -12,20 +12,20 @@ let
     sha256 = "0vw0271vbvpgyb0y97lafc5hqpfy5947zm7r2wlg17f8w94vsfhv";
   };
 
-  catpuccinSrc = pkgs.fetchgit {
+  catppuccinSrc = pkgs.fetchgit {
     url = "https://github.com/catppuccin/spicetify";
     rev = "8aaacc4b762fb507b3cf7d4d1b757eb849fcbb52";
     sha256 = "185fbh958k985ci3sf4rdxxkwbk61qmzjhd6m54h9rrsrmh5px69";
   };
 
-  mkCatpuccinTheme = name: {
+  mkCatppuccinTheme = name: {
     ${name} = {
       inherit name;
-      src = catpuccinSrc;
+      src = catppuccinSrc;
       appendName = true;
       requiredExtensions = [
         {
-          src = "${catpuccinSrc}/js";
+          src = "${catppuccinSrc}/js";
           filename = "${name}.js";
         }
       ];
@@ -178,10 +178,10 @@ in
       requiredExtensions = [ adblock ];
     };
   } // official.themes
-  // mkCatpuccinTheme "catpuccin-mocha"
-  // mkCatpuccinTheme "catpuccin-frappe"
-  // mkCatpuccinTheme "catpuccin-latte"
-  // mkCatpuccinTheme "catpuccin-macchiato"
+  // mkCatppuccinTheme "catppuccin-mocha"
+  // mkCatppuccinTheme "catppuccin-frappe"
+  // mkCatppuccinTheme "catppuccin-latte"
+  // mkCatppuccinTheme "catppuccin-macchiato"
   // mkComfyTheme "Comfy"
   // mkComfyTheme "Comfy-Chromatic"
   // mkComfyTheme "Comfy-Mono";
