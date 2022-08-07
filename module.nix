@@ -67,11 +67,11 @@ in
 
     # legacy/ease of use options (commonly set for themes like Dribbblish)
     # injectCss = xpui.Setting.inject_css;
-    injectCss = mkOption { type = lib.types.nullOr lib.types.bool; };
-    replaceColors = mkOption { type = lib.types.nullOr lib.types.bool; };
-    overwriteAssets = mkOption { type = lib.types.nullOr lib.types.bool; };
-    sidebarConfig = mkOption { type = lib.types.nullOr lib.types.bool; };
-    colorScheme = mkOption { type = lib.types.nullOr lib.types.str; };
+    injectCss = mkOption { type = lib.types.nullOr lib.types.bool; default = null;};
+    replaceColors = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
+    overwriteAssets = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
+    sidebarConfig = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
+    colorScheme = mkOption { type = lib.types.nullOr lib.types.str; default = null; };
   };
 
   config = mkIf cfg.enable {
@@ -105,7 +105,7 @@ in
         # have to have two different override functions for each case
         # (one value is null while the other is undefined...)
         createBoolOverride = set: attrName: cfgName:
-          ifTrue ((set.${attrName} or null) != null) (ifTrue (builtins.typeOf set.${attrName} == "bool") 
+          ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool") 
             { cfgName = set.${attrName}; });
         createBoolOverrideFromSubmodule = set: attrName: cfgName:
           ifTrue (builtins.hasAttr attrName set)
@@ -141,7 +141,7 @@ in
         setToString = set: lineBreakConcat (lib.attrsets.mapAttrsToList (name: value: "${name}") set);
         overridenXpui2 = trace (setToString cfg) (builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
-          (mkXpuiOverrides cfg createBoolOverrideFromSubmodule));
+          (mkXpuiOverrides cfg createBoolOverride));
 
         config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
 
