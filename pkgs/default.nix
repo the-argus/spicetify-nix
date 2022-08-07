@@ -37,6 +37,7 @@ in
           injectCss = true;
           replaceColors = true;
           overwriteAssets = true;
+          appendName = true;
         };
       } //
       mkOfficialTheme "Ziro" //
