@@ -22,7 +22,7 @@ in
   createXpuiINI = xpui: (customToINI xpui);
 
   getThemePath = theme:
-    if (builtins.hasAttr "appendName theme") then
+    if (builtins.hasAttr "appendName" theme) then
       (if theme.appendName then
         /${theme.src}/${theme.name}
       else
