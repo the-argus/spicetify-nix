@@ -78,7 +78,7 @@ in
     # install necessary packages for this user
     home.packages = with cfg;
       let
-        actualTheme = spiceLib.getTheme container;
+        actualTheme = spiceLib.getTheme cfg.theme;
         pipeConcat = foldr (a: b: a + "|" + b) "";
         # take the list of extensions and turn strings into actual extensions
         allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
