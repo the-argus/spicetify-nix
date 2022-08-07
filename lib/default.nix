@@ -24,7 +24,7 @@ in
   getThemePath = theme:
     if (builtins.hasAttr "appendName" theme) then
       (if theme.appendName then
-        /${theme.src}/${theme.name}
+        "${theme.src}/${theme.name}"
       else
         theme.src)
     else
