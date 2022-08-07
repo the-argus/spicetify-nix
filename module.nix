@@ -165,7 +165,7 @@ in
 
       customAppCommands = lineBreakConcat (map
         (item:
-          "cp -r ${(if (builtins.hasAttr "appendName" item) then
+          "cp -rn ${(if (builtins.hasAttr "appendName" item) then
                 if (item.appendName) then
                     "${item.src}/${item.name}"
                 else
