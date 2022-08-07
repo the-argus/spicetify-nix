@@ -98,6 +98,7 @@ in
         
         # cfg.theme.injectCss is a submodule but cfg.injectCss is not, so we
         # have to have two different override functions for each case
+        # (one value is null while the other is undefined...)
         createBoolOverride = set: attrName: cfgName:
           ifTrue (set.${attrName} != null && builtins.typeOf set.${attrName} == "bool")
             { cfgName = set.${attrName}; };
@@ -124,7 +125,7 @@ in
               // boolOverrideFunc container "sidebarConfig" "sidebar_config"
               # also add the colorScheme as an override if defined in cfg
               // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"));
-            Patch = (ifTrue (container == cfg.theme) container.patches);
+            Patch = (ifTrue (container == cfg.theme) (spiceLib.getTheme container).patches);
           };
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
