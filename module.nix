@@ -91,13 +91,9 @@ in
 
       # take the list of extensions and turn strings into actual extensions
       allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
-        (if builtins.typeOf cfg.theme == "set" then
-          (if builtins.hasAttr "requiredExtensions" cfg.theme then
-            cfg.theme.requiredExtensions
-          else
-            [ ]
-          ) else [ ]
-        ) ++ cfg.xpui.AdditionalOptions.extensions);
+          (ifTrueList (builtins.hasAttr "requiredExtensions" actualTheme)
+            actualTheme.requiredExtensions
+          ) ++ cfg.xpui.AdditionalOptions.extensions);
       allExtensionFiles = map (item: item.filename) allExtensions;
       extensionString = pipeConcat allExtensionFiles;
 
