@@ -72,7 +72,7 @@ in
     overwriteAssets = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
     sidebarConfig = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
     colorScheme = mkOption {
-      type = (lib.types.nullOr lib.types.oneOf [ lib.types.str lib.types.attrs ]);
+      type = (lib.types.nullOr (lib.types.oneOf [ lib.types.str lib.types.attrs ]));
       default = null;
     };
   };
