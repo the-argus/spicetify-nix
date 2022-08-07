@@ -110,13 +110,13 @@ in
         createBoolOverrideFromSubmodule = set: attrName: cfgName:
           ifTrue (builtins.hasAttr attrName set)
             (ifTrue (builtins.typeOf set.${attrName} == "bool")
-              { cfgName = set.${attrName}; });
+              { ${cfgName} = set.${attrName}; });
 
         mkXpuiOverrides =
           let
             createOverride = set: attrName: cfgName:
               ifTrue (set.${attrName} != null)
-                { cfgName = set.${attrName}; };
+                { ${cfgName} = set.${attrName}; };
           in
           container: boolOverrideFunc: {
             AdditionalOptions = {
