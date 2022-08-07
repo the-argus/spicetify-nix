@@ -1,5 +1,8 @@
 { pkgs, lib, ... }:
 let
+  spiceTypes = (import ../lib { inherit pkgs lib; }).types;
+
+  # SOURCE --------------------------------------------------------------------
   officialThemes = pkgs.fetchgit {
     url = "https://github.com/spicetify/spicetify-themes";
     rev = "9a2fcb5a545da368e4bf1d8189f58d0f664f3115";
@@ -18,6 +21,43 @@ let
     sha256 = "185fbh958k985ci3sf4rdxxkwbk61qmzjhd6m54h9rrsrmh5px69";
   };
 
+  spotifyNoPremiumSrc = pkgs.fetchgit {
+    url = "https://github.com/Daksh777/SpotifyNoPremium";
+    rev = "a2daa7a9ec3e21ebba3c6ab0ad1eb5bd8e51a3ca";
+    sha256 = "1sr6pjaygxxx6majmk5zg8967jry53z6xd6zc31ns2g4r5sy4k8d";
+  };
+
+  comfySrc = pkgs.fetchgit {
+    url = "https://github.com/Comfy-Themes/Spicetify";
+    rev = "45830ed853cc212dec0c053deb34da6aefc25ce5";
+    sha256 = "1hb9f1nwf0jw5yvrzy2bshpb89h1aaysf18zvs0g5fmhmvn7ba6s";
+  };
+
+  fluentSrc = pkgs.fetchgit {
+    url = "https://github.com/williamckha/spicetify-fluent";
+    rev = "47c13bfa2983643a14229c5ecbb88d5001c91c6b";
+    sha256 = "0pcx9wshrx0hp3rcjrhi7676baskp8r10bcahp6nr105s42d8x5z";
+  };
+
+  # EXTENSIONS ----------------------------------------------------------------
+
+  dribbblishExt = {
+    filename = "dribbblish.js";
+    src = "${officialThemes}/Dribbblish";
+  };
+
+  turntableExt = {
+    filename = "turntable.js";
+    src = "${officialThemes}/Turntable";
+  };
+
+  adblock = {
+    src = spotifyNoPremiumSrc;
+    filename = "adblock.js";
+  };
+
+  # THEME GENERATORS ----------------------------------------------------------
+
   mkCatppuccinTheme = name: {
     ${name} = {
       inherit name;
@@ -34,18 +74,59 @@ let
       overwriteAssets = true;
     };
   };
-
-  spiceTypes = (import ../lib { inherit pkgs lib; }).types;
-
-  dribbblishExt = {
-    filename = "dribbblish.js";
-    src = "${officialThemes}/Dribbblish";
+  mkComfyTheme = name: {
+    ${name} =
+      let lname = lib.strings.toLower name; in
+      {
+        inherit name;
+        src = comfySrc;
+        appendName = true;
+        injectCss = true;
+        replaceColors = true;
+        overwriteAssets = true;
+        requiredExtensions = [
+          {
+            src = "${comfySrc}/${name}";
+            filename = "${lname}.js";
+          }
+        ];
+        extraCommands = ''
+          # remove the auto-update functionality
+          echo "\n" >> ./Extensions/${lname}.js
+          cat ./Themes/${name}/${lname}.script.js >> ./Extensions/${lname}.js
+        '';
+      };
   };
 
-  turntableExt = {
-    filename = "turntable.js";
-    src = "${officialThemes}/Turntable";
+  # THEMES --------------------------------------------------------------------
+
+  SpotifyNoPremium = {
+    name = "SpotifyNoPremium";
+    src = spotifyNoPremiumSrc;
+    appendName = false;
+    requiredExtensions = [ adblock ];
   };
+
+  Fluent = {
+    name = "Fluent";
+    src = fluentSrc;
+    appendName = false;
+    injectCss = 1;
+    overwriteAssets = 1;
+    replaceColors = 1;
+    patches = {
+      "xpui.js_find_8008" = ",(\\w+=)32";
+      "xpui.js_repl_8008" = ",$\{1}56";
+    };
+    requiredExtensions = [
+      {
+        src = fluentSrc;
+        filename = "fluent.js";
+      }
+    ];
+  };
+
+  # OFFICIAL THEMES AND EXTENSIONS --------------------------------------------
 
   official = {
     themes =
@@ -127,56 +208,11 @@ let
       };
     };
   };
-
-  spotifyNoPremiumSrc = pkgs.fetchgit {
-    url = "https://github.com/Daksh777/SpotifyNoPremium";
-    rev = "a2daa7a9ec3e21ebba3c6ab0ad1eb5bd8e51a3ca";
-    sha256 = "1sr6pjaygxxx6majmk5zg8967jry53z6xd6zc31ns2g4r5sy4k8d";
-  };
-
-  adblock = {
-    src = spotifyNoPremiumSrc;
-    filename = "adblock.js";
-  };
-
-  comfySrc = pkgs.fetchgit {
-    url = "https://github.com/Comfy-Themes/Spicetify";
-    rev = "45830ed853cc212dec0c053deb34da6aefc25ce5";
-    sha256 = "1hb9f1nwf0jw5yvrzy2bshpb89h1aaysf18zvs0g5fmhmvn7ba6s";
-  };
-
-  mkComfyTheme = name: {
-    ${name} = 
-    let lname = lib.strings.toLower name; in {
-      inherit name;
-      src = comfySrc;
-      appendName = true;
-      injectCss = true;
-      replaceColors = true;
-      overwriteAssets = true;
-      requiredExtensions = [
-        {
-            src = "${comfySrc}/${name}";
-            filename = "${lname}.js";
-        }
-      ];
-      extraCommands = ''
-        # remove the auto-update functionality
-        echo "\n" >> ./Extensions/${lname}.js
-        cat ./Themes/${name}/${lname}.script.js >> ./Extensions/${lname}.js
-      '';
-    };
-};
 in
 {
   inherit official;
   themes = {
-    SpotifyNoPremium = {
-      name = "SpotifyNoPremium";
-      src = spotifyNoPremiumSrc;
-      appendName = false;
-      requiredExtensions = [ adblock ];
-    };
+    inherit SpotifyNoPremium Fluent;
   } // official.themes
   // mkCatppuccinTheme "catppuccin-mocha"
   // mkCatppuccinTheme "catppuccin-frappe"
