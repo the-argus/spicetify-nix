@@ -1,12 +1,12 @@
 { pkgs, lib, ... }:
 let
-  officialThemes = builtins.fetchgit {
+  officialThemes = pkgs.fetchgit {
     url = "https://github.com/spicetify/spicetify-themes";
     rev = "5d3d42f913467f413be9b0159f5df5023adf89af";
     submodules = true;
   };
 
-  officialSrc = builtins.fetchgit {
+  officialSrc = pkgs.fetchgit {
     url = "https://github.com/spicetify/spicetify-cli";
     rev = "6f473f28151c75e08e83fb280dd30fadd22d9c04";
     sha256 = "0vw0271vbvpgyb0y97lafc5hqpfy5947zm7r2wlg17f8w94vsfhv";

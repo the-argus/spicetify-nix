@@ -82,7 +82,7 @@ let
       src = mkOption {
         type = types.path;
         description = "Path to folder containing the theme.";
-        example = ''builtins.fetchgit {
+        example = ''pkgs.fetchgit {
                       url = "https://github.com/spicetify/spicetify-themes";
                       rev = "5d3d42f913467f413be9b0159f5df5023adf89af";
                       submodules = true;
