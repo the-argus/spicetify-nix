@@ -141,7 +141,7 @@ in
         setToString = set: lineBreakConcat (lib.attrsets.mapAttrsToList (name: value: "${name}") set);
         overridenXpui2 = trace (setToString cfg) (builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
-          (mkXpuiOverrides cfg createBoolOverride));
+          (mkXpuiOverrides cfg createBoolOverrideFromSubmodule));
 
         config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
 
