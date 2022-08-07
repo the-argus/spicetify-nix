@@ -95,26 +95,33 @@ in
         allApps = map spiceLib.getApp (cfg.enabledCustomApps ++ cfg.xpui.AdditionalOptions.custom_apps);
         allAppsNames = map (item: item.name) allApps;
         customAppsString = pipeConcat allAppsNames;
+        
+        # cfg.theme.injectCss is a submodule but cfg.injectCss is not, so we
+        # have to have two different override functions for each case
+        createBoolOverride = set: attrName: cfgName:
+          ifTrue (set.${attrName} != null && builtins.typeOf set.${attrName} == "bool")
+            { cfgName = set.${attrName}; };
+        createBoolOverrideFromSubmodule = set: attrName: cfgName:
+          ifTrue (builtins.hasAttr attrName set)
+            (ifTrue (builtins.typeOf set.${attrName} == "bool")
+              { cfgName = set.${attrName}; });
 
         mkXpuiOverrides =
           let
-            createBoolOverride = set: attrName: cfgName:
-              ifTrue (set.${attrName} != null && builtins.typeOf set.${attrName} == "bool")
-                { cfgName = set.${attrName}; };
             createOverride = set: attrName: cfgName:
               ifTrue (set.${attrName} != null)
                 { cfgName = set.${attrName}; };
           in
-          container: {
+          container: boolOverrideFunc: {
             AdditionalOptions = {
               extensions = extensionString;
               custom_apps = customAppsString;
             };
             Setting = { }
-              // createBoolOverride container "injectCss" "inject_css"
-              // createBoolOverride container "replaceColors" "replace_colors"
-              // createBoolOverride container "overwriteAssets" "overwrite_assets"
-              // createBoolOverride container "sidebarConfig" "sidebar_config"
+              // boolOverrideFunc container "injectCss" "inject_css"
+              // boolOverrideFunc container "replaceColors" "replace_colors"
+              // boolOverrideFunc container "overwriteAssets" "overwrite_assets"
+              // boolOverrideFunc container "sidebarConfig" "sidebar_config"
               # also add the colorScheme as an override if defined in cfg
               // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"));
             Patch = (ifTrue (container == cfg.theme) container.patches);
@@ -123,11 +130,11 @@ in
         # override any values defined by the user in cfg.xpui with values defined by the theme
         overridenXpui1 = builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
-          (mkXpuiOverrides theme);
+          (mkXpuiOverrides cfg.theme createBoolOverrideFromSubmodule);
         # override any values defined by the theme with values defined in cfg
         overridenXpui2 = builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
-          (mkXpuiOverrides cfg);
+          (mkXpuiOverrides cfg createBoolOverride);
 
         config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
 
