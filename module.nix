@@ -78,6 +78,7 @@ in
     # install necessary packages for this user
     home.packages = with cfg;
       let
+        actualTheme = spiceLib.getTheme container;
         pipeConcat = foldr (a: b: a + "|" + b) "";
         # take the list of extensions and turn strings into actual extensions
         allExtensions = map spiceLib.getExtension (cfg.enabledExtensions ++
@@ -125,13 +126,13 @@ in
               // boolOverrideFunc container "sidebarConfig" "sidebar_config"
               # also add the colorScheme as an override if defined in cfg
               // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"));
-            Patch = (ifTrue (container == cfg.theme) (spiceLib.getTheme container).patches);
+            Patch = (ifTrue (container == actualTheme) actualTheme.patches);
           };
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
         overridenXpui1 = builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs cfg.xpui.${name} value))
-          (mkXpuiOverrides cfg.theme createBoolOverrideFromSubmodule);
+          (mkXpuiOverrides actualTheme createBoolOverrideFromSubmodule);
         # override any values defined by the theme with values defined in cfg
         overridenXpui2 = builtins.mapAttrs
           (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
