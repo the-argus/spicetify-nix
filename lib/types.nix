@@ -89,7 +89,7 @@ let
                     };'';
       };
       requiredExtensions = mkOption {
-        type = types.listOf extension;
+        type = types.listOf (types.oneOf [ extension types.str ]);
         default = [ ];
       };
 
