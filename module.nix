@@ -67,7 +67,7 @@ in
 
     # legacy/ease of use options (commonly set for themes like Dribbblish)
     # injectCss = xpui.Setting.inject_css;
-    injectCss = mkOption { type = lib.types.nullOr lib.types.bool; default = null;};
+    injectCss = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
     replaceColors = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
     overwriteAssets = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
     sidebarConfig = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
@@ -79,7 +79,7 @@ in
     home.packages = with cfg;
       let
         actualTheme = spiceLib.getTheme cfg.theme;
-        
+
         # helper functions
         pipeConcat = foldr (a: b: a + "|" + b) "";
         lineBreakConcat = foldr (a: b: a + "\n" + b) "";
@@ -100,12 +100,12 @@ in
         allApps = map spiceLib.getApp (cfg.enabledCustomApps ++ cfg.xpui.AdditionalOptions.custom_apps);
         allAppsNames = map (item: item.name) allApps;
         customAppsString = pipeConcat allAppsNames;
-        
+
         # cfg.theme.injectCss is a submodule but cfg.injectCss is not, so we
         # have to have two different override functions for each case
         # (one value is null while the other is undefined...)
         createBoolOverride = set: attrName: cfgName:
-          ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool") 
+          ifTrue (set.${attrName} != null) (ifTrue (builtins.typeOf set.${attrName} == "bool")
             { cfgName = set.${attrName}; });
         createBoolOverrideFromSubmodule = set: attrName: cfgName:
           ifTrue (builtins.hasAttr attrName set)
@@ -133,8 +133,7 @@ in
               # and turn the theme into a string of its name
               // (ifTrue (container == cfg) (createOverride container "theme" actualTheme.name));
             Patch = (ifTrue (container == actualTheme) actualTheme.patches);
-            Backup = {}
-              // (ifTrue (container == cfg) (createOverride container "version" (cfg.spotifyPackage.version or "Unknown")));
+            Backup = { version = (cfg.spotifyPackage.version or "Unknown"); };
           };
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
