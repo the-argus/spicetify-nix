@@ -97,10 +97,10 @@ in
           let
             createBoolOverride = set: attrName: cfgName:
               if (builtins.hasAttr attrName set) then
-                let
-                  cfgVal = set.${attrName};
-                in
                 (if (builtins.typeOf cfgVal == "bool") then
+                  let
+                    cfgVal = set.${attrName};
+                  in
                   { cfgName = cfgVal; }
                 else
                   { })
