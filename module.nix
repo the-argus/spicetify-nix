@@ -5,6 +5,9 @@ let
   spiceLib = import ./lib { inherit pkgs lib; };
   spiceTypes = spiceLib.types;
   spicePkgs = import ./pkgs { inherit pkgs lib; };
+
+  ifTrue = lib.attrsets.optionalAttrs;
+  ifTrueList = lib.lists.optionals;
 in
 {
   options.programs.spicetify = {
@@ -96,18 +99,11 @@ in
         mkXpuiOverrides =
           let
             createBoolOverride = set: attrName: cfgName:
-              if (builtins.hasAttr attrName set) then 
-                (if (set.${attrName} != null && builtins.typeOf set.${attrName} == "bool") then
-                  { cfgName = set.${attrName}; }
-                else
-                  { })
-              else
-                { };
+              ifTrue (set.${attrName} != null && builtins.typeOf set.${attrName} == "bool")
+                { cfgName = set.${attrName}; };
             createOverride = set: attrName: cfgName:
-              if (builtins.hasAttr attrName set) then
-                { cfgName = set.${attrName}; }
-              else
-                { };
+              ifTrue (set.${attrName} != null)
+                { cfgName = set.${attrName}; };
           in
           container: {
             AdditionalOptions = {
@@ -120,8 +116,8 @@ in
               // createBoolOverride container "overwriteAssets" "overwrite_assets"
               // createBoolOverride container "sidebarConfig" "sidebar_config"
               # also add the colorScheme as an override if defined in cfg
-              // (if container == cfg then createOverride container "colorScheme" "color_scheme" else { });
-            Patch = (if container == cfg.theme then container.patches else { });
+              // (ifTrue (container == cfg) (createOverride container "colorScheme" "color_scheme"));
+            Patch = (ifTrue (container == cfg.theme) container.patches);
           };
 
         # override any values defined by the user in cfg.xpui with values defined by the theme
@@ -198,11 +194,11 @@ in
         cfg.spicetifyPackage
       ] ++
       # need montserrat for the BurntSienna theme
-      (if cfg.theme == "BurntSienna" ||
-      cfg.theme == spicePkgs.official.themes.BurntSienna then
+      (ifTrueList
+        (cfg.theme == "BurntSienna" ||
+        cfg.theme == spicePkgs.official.themes.BurntSienna)
         [ pkgs.montserrat ]
-      else
-        [ ]);
+      );
   };
 }
 
