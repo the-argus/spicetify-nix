@@ -189,6 +189,7 @@ in
         if (cfg.customColorScheme != null) then ''
           COLORINI=./Themes/${actualTheme.name}/color.ini
           if [ -e $COLORINI ]; then
+              echo "\n" >> $COLORINI
               # finally, use cat for its actual purpose: concatenation
               cat ${customColorSchemeINI} >> $COLORINI
           fi
