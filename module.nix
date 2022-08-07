@@ -217,9 +217,10 @@ in
         ${extensionCommands}
         # copy custom apps into CustomApps folder
         ${customAppCommands}
+        # completed app and extension installation
         # add a custom color scheme if necessary
         ${customColorSchemeScript}
-            
+        # completed custom color scheme addition 
         ${cfg.extraCommands}
 
         # extra commands that the theme might need
