@@ -16,7 +16,7 @@ let
 
   dribbblishExt = {
     filename = "dribbblish.js";
-    src = /${officialThemes}/Dribbblish;
+    src = /. + "${officialThemes}/Dribbblish";
   };
 in
 {
@@ -50,7 +50,7 @@ in
 
     extensions =
       let
-        mkOfficialExt = name: { "${name}.js" = { src = /${officialSrc}/Extensions; filename = "${name}.js"; }; };
+        mkOfficialExt = name: { "${name}.js" = { src = /. + "${officialSrc}/Extensions"; filename = "${name}.js"; }; };
       in
       { "dribbblish.js" = dribbblishExt; }
       // mkOfficialExt "autoSkipExplicit"
