@@ -147,9 +147,9 @@ in
         (mkXpuiOverrides actualTheme createBoolOverrideFromSubmodule);
       # override any values defined by the theme with values defined in cfg
       setToString = set: lineBreakConcat (lib.attrsets.mapAttrsToList (name: value: "${name}") set);
-      overridenXpui2 = trace (setToString cfg) (builtins.mapAttrs
+      overridenXpui2 = builtins.mapAttrs
         (name: value: (lib.trivial.mergeAttrs overridenXpui1.${name} value))
-        (mkXpuiOverrides cfg createBoolOverride));
+        (mkXpuiOverrides cfg createBoolOverride);
 
       config-xpui = builtins.toFile "config-xpui.ini" (spiceLib.createXpuiINI overridenXpui2);
 
@@ -165,12 +165,15 @@ in
 
       customAppCommands = lineBreakConcat (map
         (item:
-          "cp -rn ${(if (builtins.hasAttr "appendName" item) then
+        let
+          command ="cp -rn ${(if (builtins.hasAttr "appendName" item) then
                 if (item.appendName) then
                     "${item.src}/${item.name}"
                 else
                 "${item.src}"
-            else "${item.src}")} ./CustomApps/${item.name}")
+            else "${item.src}")} ./CustomApps/${item.name}";
+        in
+          "${command} && echo \"${command}\"")
         allApps);
 
       spicetify = "${cfg.spicetifyPackage}/bin/spicetify-cli --no-restart";
@@ -209,6 +212,7 @@ in
         mkdir -p Extensions
         mkdir -p CustomApps
         cp -r ${themePath} ./Themes/${theme.name}
+        echo "copied theme"
         ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
         ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
         ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
@@ -230,7 +234,7 @@ in
 
       # custom spotify package with spicetify integrated in
       spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
-        postInstall = trace finalScript finalScript;
+        postInstall = finalScript;
       });
     in
     mkIf cfg.enable {
