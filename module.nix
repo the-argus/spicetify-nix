@@ -72,7 +72,11 @@ in
     overwriteAssets = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
     sidebarConfig = mkOption { type = lib.types.nullOr lib.types.bool; default = null; };
     colorScheme = mkOption {
-      type = (lib.types.nullOr (lib.types.oneOf [ lib.types.str lib.types.attrs ]));
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+    };
+    customColorScheme = mkOption {
+      type = lib.types.nullOr lib.types.attrs;
       default = null;
     };
   };
@@ -174,6 +178,18 @@ in
       theme = spiceLib.getTheme cfg.theme;
       themePath = spiceLib.getThemePath theme;
 
+      customColorSchemeINI = builtins.toFile "dummy-color.ini"
+        spiceLib.createXpuiINI
+        { custom = cfg.customColorScheme; };
+
+      customColorSchemeScript = if (cfg.customColorScheme != null) then ''
+        COLORINI=./Themes/${actualTheme.name}/color.ini
+        if [ -e $COLORINI ]; then
+            # finally, use cat for its actual purpose: concatenation
+            cat ${customColorSchemeINI} >> $COLORINI
+        fi
+      '' else "";
+
       # custom spotify package with spicetify integrated in
       spiced-spotify = cfg.spotifyPackage.overrideAttrs (oldAttrs: rec {
         postInstall = ''
@@ -195,10 +211,14 @@ in
           mkdir -p CustomApps
           cp -r ${themePath} ./Themes/${theme.name}
           ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
+          ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
+          ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
           # copy extensions into Extensions folder
           ${extensionCommands}
           # copy custom apps into CustomApps folder
           ${customAppCommands}
+          # add a custom color scheme if necessary
+          ${customColorSchemeScript}
             
           ${cfg.extraCommands}
           popd
