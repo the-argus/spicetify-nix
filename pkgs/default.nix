@@ -45,6 +45,12 @@ let
     sha256 = "0qlkvazciqr62z7vc6fdvy6hn2mgn3blj13fi3a82vg5jb70mgxm";
   };
 
+  retroBlurSrc = pkgs.fetchgit {
+    url = "https://github.com/Motschen/Retroblur";
+    rev = "a1add2945cf753bbc32108b561faa09ef8af7183";
+    sha256 = "1g7aqg21arl05s69ywb1qkiva17gldisdmvxin85yiv14pahj06p";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -154,6 +160,12 @@ let
     };
   };
 
+  RetroBlur = {
+    name = "RetroBlur";
+    src = retroBlurSrc;
+    appendName = false;
+  };
+
   # OFFICIAL THEMES AND EXTENSIONS --------------------------------------------
 
   official = {
@@ -240,7 +252,7 @@ in
 {
   inherit official;
   themes = {
-    inherit SpotifyNoPremium Fluent DefaultDynamic;
+    inherit SpotifyNoPremium Fluent DefaultDynamic RetroBlur;
   } // official.themes
   // mkCatppuccinTheme "catppuccin-mocha"
   // mkCatppuccinTheme "catppuccin-frappe"
