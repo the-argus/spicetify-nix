@@ -39,6 +39,12 @@ let
     sha256 = "0pcx9wshrx0hp3rcjrhi7676baskp8r10bcahp6nr105s42d8x5z";
   };
 
+  defaultDynamicSrc = pkgs.fetchgit {
+    url = "https://github.com/JulienMaille/spicetify-dynamic-theme";
+    rev = "b21c35c0695b1baebbbe446a0a02ec40d4c5279e";
+    sha256 = "0qlkvazciqr62z7vc6fdvy6hn2mgn3blj13fi3a82vg5jb70mgxm";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -124,6 +130,28 @@ let
         filename = "fluent.js";
       }
     ];
+  };
+
+  DefaultDynamic = {
+    name = "DefaultDynamic";
+    src = defaultDynamicSrc;
+    appendName = false;
+    injectCss = true;
+    replaceColors = true;
+    requiredExtensions = [
+      {
+        src = defaultDynamicSrc;
+        filename = "default-dynamic.js";
+      }
+      {
+        src = defaultDynamicSrc;
+        filename = "Vibrant.min.js";
+      }
+    ];
+    patches = {
+      "xpui.js_find_8008" = ",(\\w+=)32,";
+      "xpui.js_repl_8008" = ",$\{1}28,";
+    };
   };
 
   # OFFICIAL THEMES AND EXTENSIONS --------------------------------------------
@@ -212,7 +240,7 @@ in
 {
   inherit official;
   themes = {
-    inherit SpotifyNoPremium Fluent;
+    inherit SpotifyNoPremium Fluent DefaultDynamic;
   } // official.themes
   // mkCatppuccinTheme "catppuccin-mocha"
   // mkCatppuccinTheme "catppuccin-frappe"
