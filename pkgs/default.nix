@@ -164,6 +164,8 @@ let
     name = "RetroBlur";
     src = retroBlurSrc;
     appendName = false;
+    injectCss = true;
+    replaceColors = true;
   };
 
   # OFFICIAL THEMES AND EXTENSIONS --------------------------------------------
