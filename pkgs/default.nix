@@ -278,7 +278,8 @@ let
     injectCss = true;
     replaceColors = true;
   };
-
+  
+  # BROKEN. no clue why
   Omni = {
     name = "Omni";
     src = omniSrc;
@@ -293,7 +294,8 @@ let
       }
     ];
   };
-
+  
+  # light colorscheme is broken, think that's the theme's fault
   Bloom = {
     name = "Bloom";
     src = bloomSrc;
@@ -317,18 +319,23 @@ let
     name = "DarkGreen";
     src = orchisSrc;
     appendName = true;
+    injectCss = true;
+    replaceColors = true;
   };
 
   Dracula = {
     name = "Dracula";
     src = draculaSrc;
     appendName = true;
+    replaceColors = true;
   };
 
   Nord = {
     name = "Nord";
     src = nordSrc;
     appendName = false;
+    injectCss = true;
+    replaceColors = true;
   };
 
   # OFFICIAL THEMES AND EXTENSIONS --------------------------------------------
@@ -428,18 +435,18 @@ in
   // mkComfyTheme "Comfy"
   // mkComfyTheme "Comfy-Chromatic"
   // mkComfyTheme "Comfy-Mono";
-  extensions = { 
+  extensions = {
     "history.js" = history; # alias for historyShortcut.js
   } // official.extensions
-    // appendJS history
-    // appendJS lastfm
-    // appendJS genre
-    // appendJS hidePodcasts
-    // appendJS adblock
-    // appendJS savePlaylists
-    // appendJS autoSkip
-    // appendJS fullScreen
-    // appendJS playNext
-    // appendJS volumePercentage;
+  // appendJS history
+  // appendJS lastfm
+  // appendJS genre
+  // appendJS hidePodcasts
+  // appendJS adblock
+  // appendJS savePlaylists
+  // appendJS autoSkip
+  // appendJS fullScreen
+  // appendJS playNext
+  // appendJS volumePercentage;
   apps = { } // official.apps;
 }

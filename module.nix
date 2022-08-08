@@ -209,21 +209,20 @@ in
         mkdir -p Extensions
         mkdir -p CustomApps
         cp -r ${themePath} ./Themes/${theme.name}
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
         echo "copied theme"
         # copy extensions into Extensions folder
         ${extensionCommands}
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
         # copy custom apps into CustomApps folder
         ${customAppCommands}
+        ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
         # completed app and extension installation
         # add a custom color scheme if necessary
         ${customColorSchemeScript}
         # completed custom color scheme addition 
         ${cfg.extraCommands}
         
-        ${pkgs.coreutils-full}/bin/chmod -R a+wr Themes
-        ${pkgs.coreutils-full}/bin/chmod -R a+wr Extensions
-        ${pkgs.coreutils-full}/bin/chmod -R a+wr CustomApps
-
         # extra commands that the theme might need
         ${if (builtins.hasAttr "extraCommands" actualTheme) then
             (if actualTheme.extraCommands != null then
