@@ -142,6 +142,12 @@ let
     sha256 = "05v9c9vzdk2maqhzyzr0fd5nhv5im1cvspmly3j04p8k92hic33v";
   };
 
+  huhExtensionsSrc = pkgs.fetchgit {
+    url = "https://github.com/huhridge/huh-spicetify-extensions";
+    rev = "332c6ec9089aa6d5afd911644a649467e4698852";
+    sha256 = "0yrsicfdb571z7p6fayh9f4zy65y18ff63g6lcs74ir0pv2hqllq";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -236,6 +242,33 @@ let
     src = "${charlieS1103Src}/phraseToPlaylist";
     filename = "phraseToPlaylist.js";
   };
+
+  fullAlbumDate = {
+    src = "${huhExtensionsSrc}/fullAlbumDate";
+    filename = "fullAlbumDate.js";
+  };
+  fullAppDisplayMod = {
+    src = "${huhExtensionsSrc}/fullAppDisplayMod";
+    filename = "fullAppDisplayMod.js";
+  };
+  goToSong = {
+    src = "${huhExtensionsSrc}/goToSong";
+    filename = "goToSong.js";
+  };
+  listPlaylistsWithSong = {
+    src = "${huhExtensionsSrc}/listPlaylistsWithSong";
+    filename = "listPlaylistsWithSong.js";
+  };
+  playlistIntersection = {
+    src = "${huhExtensionsSrc}/playlistIntersection";
+    filename = "playlistIntersection.js";
+  };
+  skipStats = {
+    src = "${huhExtensionsSrc}/skipStats";
+    filename = "skipStats.js";
+  };
+
+  # UNUSED
   charliesAdblock = {
     src = "${charlieS1103Src}/adblock";
     filename = "adblock.js";
@@ -525,6 +558,12 @@ in
     "songStats.js" = songStats;
     "featureShuffle.js" = featureShuffle;
   } // official.extensions
+  // appendJS fullAlbumDate
+  // appendJS fullAppDisplayMod
+  // appendJS goToSong
+  // appendJS listPlaylistsWithSong
+  // appendJS playlistIntersection
+  // appendJS skipStats
   // appendJS phraseToPlaylist
   // appendJS fixEnhance
   // appendJS wikify
