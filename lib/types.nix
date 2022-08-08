@@ -70,9 +70,9 @@ let
         example = "dribbblish.js";
       };
       experimentalFeatures = mkOption {
-        type = types.nullOr types.bool;
+        type = types.bool;
         description = "Value to set AdditionalOptions/experimental_features to.";
-        default = null;
+        default = false;
       };
     };
   };
