@@ -162,6 +162,23 @@ let
     filename = "volumePercentage.js";
   };
 
+  hidePodcasts = {
+    src = hidePodcastsSrc;
+    filename = "hidePodcasts.js";
+  };
+  history = {
+    src = historySrc;
+    filename = "historyShortcut.js";
+  };
+  genre = {
+    src = genreSrc;
+    filename = "genre.js";
+  };
+  lastfm = {
+    src = "${lastfmSrc}/src";
+    filename = "lastfm.js";
+  };
+
   # THEME GENERATORS ----------------------------------------------------------
 
   mkCatppuccinTheme = name: {
@@ -411,7 +428,13 @@ in
   // mkComfyTheme "Comfy"
   // mkComfyTheme "Comfy-Chromatic"
   // mkComfyTheme "Comfy-Mono";
-  extensions = { } // official.extensions
+  extensions = { 
+    "history.js" = history; # alias for historyShortcut.js
+  } // official.extensions
+    // appendJS history
+    // appendJS lastfm
+    // appendJS genre
+    // appendJS hidePodcasts
     // appendJS adblock
     // appendJS savePlaylists
     // appendJS autoSkip
