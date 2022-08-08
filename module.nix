@@ -113,6 +113,15 @@ in
           (ifTrue (builtins.typeOf set.${attrName} == "bool")
             { ${cfgName} = set.${attrName}; });
 
+      # determine whether or not any extension requires experimental_features
+      needExperimental = lib.lists.any
+        (item: (if (builtins.hasAttr "experimentalFeatures" item) then
+          item.experimentalFeatures
+        else
+          false)
+        )
+        allExtensions;
+
       mkXpuiOverrides =
         let
           createOverride = set: attrName: cfgName:
@@ -123,6 +132,7 @@ in
           AdditionalOptions = {
             extensions = extensionString;
             custom_apps = customAppsString;
+            experimental_features = needExperimental;
           };
           Setting = { }
             // boolOverrideFunc container "injectCss" "inject_css"

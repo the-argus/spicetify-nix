@@ -136,6 +136,12 @@ let
     sha256 = "1xczz5zd7275hcdg4hgqvcynbrkn4mx6g5vz6fylddvp275h3fn6";
   };
 
+  charlieS1103Src = pkgs.fetchgit {
+    url = "https://github.com/CharlieS1103/spicetify-extensions";
+    rev = "40b8c13722ca92ce71ccbd27645e47da92ee25ec";
+    sha256 = "05v9c9vzdk2maqhzyzr0fd5nhv5im1cvspmly3j04p8k92hic33v";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -204,11 +210,37 @@ let
     src = "${customAppsExtensionsSrc}/v2/show-queue-duration";
     filename = "showQueueDuration.js";
   };
-
   volumeProfiles = {
     src = "${customAppsExtensionsSrc}/v2/volume-profiles/dist";
     filename = "volume-profiles.js";
   };
+
+  songStats = {
+    src = "${charlieS1103Src}/songstats";
+    filename = "songstats.js";
+  };
+  featureShuffle = {
+    src = "${charlieS1103Src}/featureshuffle";
+    filename = "featureshuffle.js";
+  };
+  wikify = {
+    src = "${charlieS1103Src}/wikify";
+    filename = "wikify.js";
+  };
+  fixEnhance = {
+    src = "${charlieS1103Src}/fixEnhance";
+    filename = "fixEnhance.js";
+    experimentalFeatures = true;
+  };
+  phraseToPlaylist = {
+    src = "${charlieS1103Src}/phraseToPlaylist";
+    filename = "phraseToPlaylist.js";
+  };
+  charliesAdblock = {
+    src = "${charlieS1103Src}/adblock";
+    filename = "adblock.js";
+  };
+
 
   # THEME GENERATORS ----------------------------------------------------------
 
@@ -490,7 +522,14 @@ in
     "history.js" = history;
     "volumeProfiles.js" = volumeProfiles;
     "copyToClipboard.js" = copyToClipboard;
+    "songStats.js" = songStats;
+    "featureShuffle.js" = featureShuffle;
   } // official.extensions
+  // appendJS phraseToPlaylist
+  // appendJS fixEnhance
+  // appendJS wikify
+  // appendJS featureShuffle
+  // appendJS songStats
   // appendJS autoVolume
   // appendJS showQueueDuration
   // appendJS copyToClipboard

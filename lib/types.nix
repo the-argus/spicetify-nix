@@ -69,6 +69,10 @@ let
         description = "Name of the .js file to enable.";
         example = "dribbblish.js";
       };
+      experimentalFeatures = mkOption {
+        type = types.bool;
+        description = "Value to set AdditionalOptions/experimental_features to.";
+      };
     };
   };
 
