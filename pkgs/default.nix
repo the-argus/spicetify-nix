@@ -148,6 +148,12 @@ let
     sha256 = "0yrsicfdb571z7p6fayh9f4zy65y18ff63g6lcs74ir0pv2hqllq";
   };
 
+  playlistIconsSrc = pkgs.fetchgit {
+    url = "https://github.com/jeroentvb/spicetify-playlist-icons";
+    rev = "9ccb8b677eb139dbc3bdd10f1d9bec25c3a6144e";
+    sha256 = "18ai0l0j3kswy33m7w7bdw5k39f0cfm4hbxndgk4dkljsi5k31nv";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -266,6 +272,10 @@ let
   skipStats = {
     src = "${huhExtensionsSrc}/skipStats";
     filename = "skipStats.js";
+  };
+  playlistIcons = {
+    src = playlistIconsSrc;
+    filename = "playlist-icons.js";
   };
 
   # UNUSED
@@ -557,7 +567,9 @@ in
     "copyToClipboard.js" = copyToClipboard;
     "songStats.js" = songStats;
     "featureShuffle.js" = featureShuffle;
+    "playlistIcons.js" = playlistIcons;
   } // official.extensions
+  // appendJS playlistIcons
   // appendJS fullAlbumDate
   // appendJS fullAppDisplayMod
   // appendJS goToSong
