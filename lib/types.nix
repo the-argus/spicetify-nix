@@ -72,6 +72,7 @@ let
       experimentalFeatures = mkOption {
         type = types.bool;
         description = "Value to set AdditionalOptions/experimental_features to.";
+        default = null;
       };
     };
   };
