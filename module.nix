@@ -253,9 +253,12 @@ in
         ] ++
         # need montserrat for the BurntSienna theme
         (ifTrueList
-          (cfg.theme == "BurntSienna" ||
-          cfg.theme == spicePkgs.official.themes.BurntSienna)
+          (actualTheme == spicePkgs.official.themes.BurntSienna)
           [ pkgs.montserrat ]
+        ) ++
+        (ifTrueList
+          (cfg.theme == spicePkgs.themes.Orchis)
+          [ pkgs.fira ]
         );
       home.sessionVariables = {
         SPICETIFY_CONFIG = "${spiced-spotify}/spicetify";
