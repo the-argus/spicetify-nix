@@ -154,6 +154,12 @@ let
     sha256 = "18ai0l0j3kswy33m7w7bdw5k39f0cfm4hbxndgk4dkljsi5k31nv";
   };
 
+  tetraxSrc = pkgs.fetchgit {
+    url = "https://github.com/Tetrax-10/Spicetify-Extensions";
+    rev = "928ea55b6129da2ff68a1bc28e1054a8380a6d1e";
+    sha256 = "001h2f137vq8a6l9id05nkh7nw7cbajn5s6a80wlhmm2g03rhm7k";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -276,6 +282,15 @@ let
   playlistIcons = {
     src = playlistIconsSrc;
     filename = "playlist-icons.js";
+  };
+
+  seekSong = {
+    src = "${tetraxSrc}/Seek-Song";
+    filename = "seekSong.js";
+  };
+  skipOrPlayLikedSongs = {
+    src = "${tetraxSrc}/Skip-or-Play-Liked-Songs";
+    filename = "skipOrPlayLikedSongs.js";
   };
 
   # UNUSED
@@ -569,6 +584,8 @@ in
     "featureShuffle.js" = featureShuffle;
     "playlistIcons.js" = playlistIcons;
   } // official.extensions
+  // appendJS seekSong
+  // appendJS skipOrPlayLikedSongs
   // appendJS playlistIcons
   // appendJS fullAlbumDate
   // appendJS fullAppDisplayMod
