@@ -124,6 +124,18 @@ let
     sha256 = "1pnya2j336f847h3vgiprdys4pl0i61ivbii1wyb7yx3wscq7ass";
   };
 
+  customAppsExtensionsSrc = pkgs.fetchgit {
+    url = "https://github.com/3raxton/spicetify-custom-apps-and-extensions";
+    rev = "0f5e79fe43abf57f714d7d00bd288870d5b6f718";
+    sha256 = "1kjzaczp9p88jkf9jxkh3wrdydz9vhfljh6yaywzqsa2qz7zycp3";
+  };
+
+  spotifyCanvasSrc = pkgs.fetchgit {
+    url = "https://github.com/itsmeow/Spicetify-Canvas";
+    rev = "052926a51d7586fc107ac650a61dfa0b1669c3eb";
+    sha256 = "1xczz5zd7275hcdg4hgqvcynbrkn4mx6g5vz6fylddvp275h3fn6";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -177,6 +189,25 @@ let
   lastfm = {
     src = "${lastfmSrc}/src";
     filename = "lastfm.js";
+  };
+
+  autoVolume = {
+    src = autoVolumeSrc;
+    filename = "autoVolume.js";
+  };
+
+  copyToClipboard = {
+    src = "${customAppsExtensionsSrc}/v2/copy-to-clipboard";
+    filename = "copytoclipboard2.js";
+  };
+  showQueueDuration = {
+    src = "${customAppsExtensionsSrc}/v2/show-queue-duration";
+    filename = "showQueueDuration.js";
+  };
+
+  volumeProfiles = {
+    src = "${customAppsExtensionsSrc}/v2/volume-profiles/dist";
+    filename = "volume-profiles.js";
   };
 
   # THEME GENERATORS ----------------------------------------------------------
@@ -278,7 +309,7 @@ let
     injectCss = true;
     replaceColors = true;
   };
-  
+
   # BROKEN. no clue why
   Omni = {
     name = "Omni";
@@ -294,7 +325,7 @@ let
       }
     ];
   };
-  
+
   # light colorscheme is broken, think that's the theme's fault
   Bloom = {
     name = "Bloom";
@@ -336,6 +367,25 @@ let
     appendName = false;
     injectCss = true;
     replaceColors = true;
+  };
+
+  # theres a thing at https://github.com/itsmeow/Spicetify-Canvas
+  # about getting a custom build of chromium or something. I am NOT doing that
+  # ... but maybe one day if someone asks
+  # TODO: add the ability to append this user.css to any other user.css
+  # for installation in any theme
+  SpotifyCanvas = {
+    name = "SpotifyCanvas";
+    src = "${spotifyCanvasSrc}/Themes/canvas";
+    appendName = false;
+    injectCss = true;
+
+    requiredExtensions = [
+      {
+        src = "${spotifyCanvasSrc}/Extensions";
+        filename = "getCanvas.js";
+      }
+    ];
   };
 
   # OFFICIAL THEMES AND EXTENSIONS --------------------------------------------
@@ -426,7 +476,7 @@ in
   inherit official;
   themes = {
     inherit SpotifyNoPremium Fluent DefaultDynamic RetroBlur Omni Bloom Orchis
-      Dracula Nord;
+      Dracula Nord SpotifyCanvas;
   } // official.themes
   // mkCatppuccinTheme "catppuccin-mocha"
   // mkCatppuccinTheme "catppuccin-frappe"
@@ -436,8 +486,16 @@ in
   // mkComfyTheme "Comfy-Chromatic"
   // mkComfyTheme "Comfy-Mono";
   extensions = {
-    "history.js" = history; # alias for historyShortcut.js
+    # aliases for weirdly named extension files
+    "history.js" = history;
+    "volumeProfiles.js" = volumeProfiles;
+    "copyToClipboard.js" = copyToClipboard;
   } // official.extensions
+  // appendJS autoVolume
+  // appendJS showQueueDuration
+  // appendJS copyToClipboard
+  // appendJS volumeProfiles
+  // appendJS autoVolume
   // appendJS history
   // appendJS lastfm
   // appendJS genre
