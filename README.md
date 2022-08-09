@@ -48,6 +48,7 @@ Here are two examples of files which configures spicetify when imported into a u
         "hidePodcasts.js"
       ];
     };
+}
 ```
 
 ### MAXIMUM CONFIGURATION
@@ -161,7 +162,7 @@ WARNING: Do not copy + paste this configuration. The "enabledCustomApps" causes 
 
 ## Themes, Extensions, and CustomApps
 
-Are found in THEMES.md, EXTENSIONS.md, and CUSTOMAPPS.md, respectively.
+Are found in [THEMES.md](./THEMES.md), EXTENSIONS.md, and CUSTOMAPPS.md, respectively.
 
 ## macOS
 This package has no macOS support, because Spotify in nixpkgs has no macOS support.
