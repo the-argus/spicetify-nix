@@ -190,7 +190,7 @@ in
               "${item.src}")} ./CustomApps/${item.name}")
         allApps);
 
-      spicetify = "./spicetify-cli --no-restart";
+      spicetify = "spicetify-cli --no-restart";
 
       theme = spiceLib.getTheme cfg.theme;
       themePath = spiceLib.getThemePath theme;
@@ -212,15 +212,17 @@ in
       finalScript = ''
         export SPICETIFY_CONFIG=$out/spicetify
         mkdir -p $SPICETIFY_CONFIG
-        pushd $SPICETIFY_CONFIG
+        
         # move spicetify bin here
-        cp ${cfg.spicetifyPackage}/bin/spicetify-cli .
-        cp -r ${cfg.spicetifyPackage}/bin/jsHelper .
-        ${pkgs.coreutils-full}/bin/chmod +x spicetify-cli
+        cp ${cfg.spicetifyPackage}/bin/spicetify-cli $SPICETIFY_CONFIG/spicetify-cli
+        ${pkgs.coreutils-full}/bin/chmod +x $SPICETIFY_CONFIG/spicetify-cli
+        cp -r ${cfg.spicetifyPackage}/bin/jsHelper $SPICETIFY_CONFIG/jsHelper
         # grab the css map
         cp -r ${cfg.cssMap} css-map.json
         # add the current directory to path
-        export PATH=.:$PATH
+        export PATH=$SPICETIFY_CONFIG:$PATH
+        
+        pushd $SPICETIFY_CONFIG
                 
         # create config and prefs
         cp ${config-xpui} config-xpui.ini
