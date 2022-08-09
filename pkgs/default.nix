@@ -330,7 +330,7 @@ let
     src = "${groupSessionSrc}/src";
     filename = "group-session.js";
   };
-  
+
 
   # UNUSED
   # we already have an adblock
@@ -523,6 +523,13 @@ let
     ];
   };
 
+  # CUSTOMAPPS ----------------------------------------------------------------
+  localFiles = {
+    name = "localFiles";
+    src = localFilesSrc;
+    appendName = false;
+  };
+
   # OFFICIAL THEMES AND EXTENSIONS --------------------------------------------
 
   official = {
@@ -662,5 +669,5 @@ in
   // appendJS fullScreen
   // appendJS playNext
   // appendJS volumePercentage;
-  apps = { } // official.apps;
+  apps = { inherit localFiles; } // official.apps;
 }
