@@ -214,7 +214,7 @@ in
         mkdir -p $SPICETIFY_CONFIG
         pushd $SPICETIFY_CONFIG
         # move spicetify bin here
-        ln -f ${cfg.spicetifyPackage}/bin/spicetify-cli spicetify-cli
+        cp ${cfg.spicetifyPackage}/bin/spicetify-cli .
         cp -r ${cfg.spicetifyPackage}/bin/jsHelper .
         # grab the css map
         cp -r ${cfg.cssMap} css-map.json
