@@ -4,15 +4,17 @@
 # EDIT: nevermind
 Turns out using spicetify 2.9.9 and the most recent CSS map fixes most (or all) of the issues. Use the following configuration option to get spicetify 2.9.9:
 ```nix
-spicetifyPackage = pkgs.spicetify-cli.overrideAttrs (oa: rec {
-  pname = "spicetify-cli";
-  version = "2.9.9";
-  src = pkgs.fetchgit {
-    url = "https://github.com/spicetify/${pname}";
-    rev = "v${version}";
-    sha256 = "1a6lqp6md9adxjxj4xpxj0j1b60yv3rpjshs91qx3q7blpsi3z4z";
-  };
-});
+{
+  spicetifyPackage = pkgs.spicetify-cli.overrideAttrs (oa: rec {
+    pname = "spicetify-cli";
+    version = "2.9.9";
+    src = pkgs.fetchgit {
+      url = "https://github.com/spicetify/${pname}";
+      rev = "v${version}";
+      sha256 = "1a6lqp6md9adxjxj4xpxj0j1b60yv3rpjshs91qx3q7blpsi3z4z";
+    };
+  });
+}
 ```
 
 # Spicetify-Nix
