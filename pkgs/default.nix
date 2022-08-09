@@ -160,6 +160,24 @@ let
     sha256 = "001h2f137vq8a6l9id05nkh7nw7cbajn5s6a80wlhmm2g03rhm7k";
   };
 
+  powerBarSrc = pkgs.fetchgit {
+    url = "https://github.com/jeroentvb/spicetify-power-bar";
+    rev = "bea0d0d05271c543a41e7e464e8b9a3bd3de3003";
+    sha256 = "09g72nlapqaal1rsd4x1nh0g6dg9286hqfxq1439r7k7fqa5hwc7";
+  };
+
+  groupSessionSrc = pkgs.fetchgit {
+    url = "https://github.com/timll/spotify-group-session";
+    rev = "06c5b218ccec3e50b8b1d5f067898727d96e672b";
+    sha256 = "1kcpkvijjkmgq9gl62a93yhgs77z7c1xyv3x6h03bhpd94ccyycd";
+  };
+
+  startPageSrc = pkgs.fetchgit {
+    url = "https://github.com/Resxt/startup-page";
+    rev = "cca2b29e690dad4d8b89f0ba994b2f9a714f4e6a";
+    sha256 = "1qqar6lcq1djbiwgsjd7sd5r8061fkwfy92yfvh3b7i9q939djf5";
+  };
+
   # EXTENSIONS ----------------------------------------------------------------
 
   dribbblishExt = {
@@ -293,10 +311,37 @@ let
     filename = "skipOrPlayLikedSongs.js";
   };
 
+  powerBar = {
+    src = powerBarSrc;
+    filename = "power-bar.js";
+  };
+  # TODO: add user.css additions as part of extensions, for snippets
+  # powerBar can by styled with the following CSS:
+  # #power-bar-container {
+  #   --power-bar-background-color: #333333;
+  #   --power-bar-main-text-color: #ffffff;
+  #   --power-bar-subtext-color: #b3b3b3;
+  #   --power-bar-active-background-color: #1db954;
+  #   --power-bar-active-text-color: #121212;
+  #   --power-bar-border-color: #000000;
+  # }
+
+  groupSession = {
+    src = "${groupSessionSrc}/src";
+    filename = "group-session.js";
+  };
+  
+
   # UNUSED
+  # we already have an adblock
   charliesAdblock = {
     src = "${charlieS1103Src}/adblock";
     filename = "adblock.js";
+  };
+  # startpage needs r/w
+  startPage = {
+    src = "${startPageSrc}/dist";
+    filename = "startup-page.js";
   };
 
 
@@ -583,7 +628,11 @@ in
     "songStats.js" = songStats;
     "featureShuffle.js" = featureShuffle;
     "playlistIcons.js" = playlistIcons;
+    "powerBar.js" = powerBar;
+    "groupSession.js" = groupSession;
   } // official.extensions
+  // appendJS groupSession
+  // appendJS powerBar
   // appendJS seekSong
   // appendJS skipOrPlayLikedSongs
   // appendJS playlistIcons
