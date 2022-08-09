@@ -109,7 +109,7 @@ in
       allApps = map spiceLib.getApp (cfg.enabledCustomApps ++ cfg.xpui.AdditionalOptions.custom_apps);
       allAppsNames = map (item: item.name) allApps;
       customAppsString = pipeConcat allAppsNames;
-
+ 
       # cfg.theme.injectCss is a submodule but cfg.injectCss is not, so we
       # have to have two different override functions for each case
       # (one value is null while the other is undefined...)

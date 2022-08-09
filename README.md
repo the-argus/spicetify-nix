@@ -16,7 +16,6 @@ Turns out using spicetify 2.9.9 and the most recent CSS map fixes most (or all) 
   });
 }
 ```
-
 # Spicetify-Nix
 
 Modifies Spotify using [spicetify-cli](https://github.com/khanhas/spicetify-cli).
