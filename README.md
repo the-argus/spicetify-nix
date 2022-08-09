@@ -5,7 +5,7 @@
 Turns out using spicetify 2.9.9 and the most recent CSS map fixes most (or all) of the issues. Use the following configuration option to get spicetify 2.9.9:
 ```nix
 {
-  spicetifyPackage = pkgs.spicetify-cli.overrideAttrs (oa: rec {
+  programs.spicetify.spicetifyPackage = pkgs.spicetify-cli.overrideAttrs (oa: rec {
     pname = "spicetify-cli";
     version = "2.9.9";
     src = pkgs.fetchgit {
