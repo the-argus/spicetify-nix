@@ -79,6 +79,14 @@ in
       type = lib.types.nullOr lib.types.attrs;
       default = null;
     };
+
+    cssMap = mkOption {
+      type = lib.types.path;
+      default = pkgs.fetchurl {
+        url = "https://raw.githubusercontent.com/spicetify/spicetify-cli/6f473f28151c75e08e83fb280dd30fadd22d9c04/css-map.json";
+        sha256 = "1qj0hlq98hz4v318qhz6ijyrir96fj962gqz036dm4jka3bg06l7";
+      };
+    };
   };
 
   config =
@@ -182,7 +190,7 @@ in
               "${item.src}")} ./CustomApps/${item.name}")
         allApps);
 
-      spicetify = "${cfg.spicetifyPackage}/bin/spicetify-cli --no-restart";
+      spicetify = "spicetify-cli --no-restart";
 
       theme = spiceLib.getTheme cfg.theme;
       themePath = spiceLib.getThemePath theme;
@@ -205,6 +213,13 @@ in
         export SPICETIFY_CONFIG=$out/spicetify
         mkdir -p $SPICETIFY_CONFIG
         pushd $SPICETIFY_CONFIG
+        # move spicetify bin here
+        ln -f ${cfg.spicetifyPackage}/bin/spicetify-cli spicetify-cli
+        cp -r ${cfg.spicetifyPackage}/bin/jsHelper .
+        # grab the css map
+        cp -r ${cfg.cssMap} css-map.json
+        # add the current directory to path
+        export PATH=.:$PATH
                 
         # create config and prefs
         cp ${config-xpui} config-xpui.ini
@@ -241,7 +256,7 @@ in
               "")
           else ""}
         popd
-        ${spicetify} backup apply
+        ${spicetify} restore backup apply
             
         # fix config to point to home directory (not necessary I don't think, but whatever)
         # sed -i "s|$out/share/spotify/prefs|${config.home.homeDirectory}/.config/spotify/prefs|g" $SPICETIFY_CONFIG/config-xpui.ini
