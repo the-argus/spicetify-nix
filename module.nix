@@ -190,7 +190,7 @@ in
               "${item.src}")} ./CustomApps/${item.name}")
         allApps);
 
-      spicetify = "spicetify-cli --no-restart";
+      spicetify = "./spicetify-cli --no-restart";
 
       theme = spiceLib.getTheme cfg.theme;
       themePath = spiceLib.getThemePath theme;
