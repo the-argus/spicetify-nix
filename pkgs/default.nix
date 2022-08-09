@@ -654,7 +654,6 @@ in
   // appendJS wikify
   // appendJS featureShuffle
   // appendJS songStats
-  // appendJS autoVolume
   // appendJS showQueueDuration
   // appendJS copyToClipboard
   // appendJS volumeProfiles
