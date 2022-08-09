@@ -5,6 +5,7 @@ These are pre-packaged and somewhat tested themes. Provided you don't use a brok
 All of these themes can be found [here.](https://github.com/spicetify/spicetify-themes)
 ### Default
 Identical to the default look of spotify, but with other colorschemes available.
+![preview](https://github.com/spicetify/spicetify-themes/blob/master/Default/ocean.png)
 ### BurntSienna
 Grey and orange theme using the montserrat typeface.
 ### Dreary
@@ -28,7 +29,7 @@ Inspired by the Zorin GTK theme.
 ### Catppuccin*
 A soothing pastel theme for spotify. Comes in four variations, each with their own color schemes: catppuccin-mocha, catppuccin-frappe, catppuccin-latte, and catppuccin-macchiato. [Source](https://github.com/catppuccin/spicetify)
 ### Comfy
-Stay comfy while listening to music. Rounded corners and dark blues. Comes in two additional variations: Comfy-Chromatic and Comfy-Mono[Source](https://github.com/Comfy-Themes/Spicetify)
+Stay comfy while listening to music. Rounded corners and dark blues. Comes in two additional variations: Comfy-Chromatic and Comfy-Mono. [Source](https://github.com/Comfy-Themes/Spicetify)
 ### Dracula
 Default spotify with the colors of the popular scheme. [Source](https://github.com/Darkempire78/Dracula-Spicetify)
 ### Nord
