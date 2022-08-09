@@ -21,40 +21,31 @@ Here are two examples of files which configures spicetify when imported into a u
 
 ### Minimal Configuration
 ```nix
-{ pkgs, spicetify-nix, ... }:
+{ pkgs, unstable, lib, spicetify-nix, ... }:
 {
+  # allow spotify to be installed if you don't have unfree enabled already
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "spotify-unwrapped"
+  ];
+
   # import the flake's module
   imports = [ spicetify-nix.homeManagerModule ];
 
   # configure spicetify :)
   programs.spicetify =
-    let
-      hidePodcasts = pkgs.fetchgit {
-        url = "https://github.com/theRealPadster/spicetify-hide-podcasts";
-        rev = "cfda4ce0c3397b0ec38a971af4ff06daba71964d";
-        sha256 = "146bz9v94dk699bshbc21yq4y5yc38lq2kkv7w3sjk4x510i0v3q";
-      };
-    in
     {
-      enable = true;
-      theme = "Dribbblish";
-      colorScheme = "rosepine";
-      enabledCustomApps = [ ];
-      enabledExtensions = [
-        "fullAppDisplay.js"
-        "shuffle+.js"
-        "hidePodcasts.js"
-      ];
-      #
-      # thirdPartyCustomApps = {
-      #   localFiles = "${localFiles}";
-      # };
-      #
-      thirdPartyExtensions = {
-        hidePodcasts = "${hidePodcasts}/hidePodcasts.js";
-      };
+        enable = true;
+        theme = "catppuccin-mocha";
+        # OR 
+        # theme = spicetify-nix.pkgs.themes.catppuccin-mocha;
+        colorScheme = "flamingo";
+
+        enabledExtensions = [
+            "fullAppDisplay.js"
+            "shuffle+.js"
+            "hidePodcasts.js"
+        ];
     };
-}
 ```
 
 ### MAXIMUM CONFIGURATION
@@ -79,6 +70,12 @@ WARNING: Do not copy + paste this configuration. The "enabledCustomApps" causes 
         url = "https://github.com/spicetify/spicetify-themes";
         rev = "c2751b48ff9693867193fe65695a585e3c2e2133";
         sha256 = "0rbqaxvyfz2vvv3iqik5rpsa3aics5a7232167rmyvv54m475agk";
+      };
+      # pin a certain version of the localFiles custom app
+      localFilesSrc = pkgs.fetchgit {
+        url = "https://github.com/hroland/spicetify-show-local-files/";
+        rev = "1bfd2fc80385b21ed6dd207b00a371065e53042e";
+        sha256 = "01gy16b69glqcalz1wm8kr5wsh94i419qx4nfmsavm4rcvcr3qlx";
       };
     in
     {
@@ -143,7 +140,7 @@ WARNING: Do not copy + paste this configuration. The "enabledCustomApps" causes 
         new-releases
         {
             name = "localFiles";
-            src = localFiles;
+            src = localFilesSrc;
             appendName = false;
         }
       ];
@@ -159,6 +156,10 @@ WARNING: Do not copy + paste this configuration. The "enabledCustomApps" causes 
     };
 }
 ```
+
+## Themes, Extensions, and CustomApps
+
+Are found in THEMES.md, EXTENSIONS.md, and CUSTOMAPPS.md, respectively.
 
 ## macOS
 This package has no macOS support, because Spotify in nixpkgs has no macOS support.
