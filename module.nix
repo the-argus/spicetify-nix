@@ -216,6 +216,7 @@ in
         # move spicetify bin here
         cp ${cfg.spicetifyPackage}/bin/spicetify-cli .
         cp -r ${cfg.spicetifyPackage}/bin/jsHelper .
+        ${pkgs.coreutils-full}/bin/chmod +x spicetify-cli
         # grab the css map
         cp -r ${cfg.cssMap} css-map.json
         # add the current directory to path
