@@ -98,7 +98,15 @@ Here are two examples of files which configures spicetify when imported into a u
       # use spotify from the nixpkgs master branch
       spotifyPackage = unstable.spotify-unwrapped;
       # use a custom build of spicetify, also an old version.
-      spicetifyPackage = import ../../packages/spicetify-cli-2.9.9.nix { inherit pkgs; };
+      spicetifyPackage = pkgs.spicetify-cli.overrideAttrs (oa: rec {
+        pname = "spicetify-cli";
+        version = "2.9.9";
+        src = pkgs.fetchgit {
+          url = "https://github.com/spicetify/${pname}";
+          rev = "v${version}";
+          sha256 = "1a6lqp6md9adxjxj4xpxj0j1b60yv3rpjshs91qx3q7blpsi3z4z";
+        };
+      });
 
       # actually enable the installation of spotify and spicetify
       enable = true;
