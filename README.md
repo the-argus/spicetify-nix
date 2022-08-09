@@ -34,17 +34,19 @@ Here are two examples of files which configures spicetify when imported into a u
   # configure spicetify :)
   programs.spicetify =
     {
-        enable = true;
-        theme = "catppuccin-mocha";
-        # OR 
-        # theme = spicetify-nix.pkgs.themes.catppuccin-mocha;
-        colorScheme = "flamingo";
+      enable = true;
+      # recommended to use newest version of spicetify unless you know what you're doing
+      spicetifyPackage = unstable.spicetify-cli;
+      theme = "catppuccin-mocha";
+      # OR 
+      # theme = spicetify-nix.pkgs.themes.catppuccin-mocha;
+      colorScheme = "flamingo";
 
-        enabledExtensions = [
-            "fullAppDisplay.js"
-            "shuffle+.js"
-            "hidePodcasts.js"
-        ];
+      enabledExtensions = [
+        "fullAppDisplay.js"
+        "shuffle+.js"
+        "hidePodcasts.js"
+      ];
     };
 ```
 
