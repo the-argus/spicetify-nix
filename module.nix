@@ -218,7 +218,7 @@ in
         ${pkgs.coreutils-full}/bin/chmod +x $SPICETIFY_CONFIG/spicetify-cli
         cp -r ${cfg.spicetifyPackage}/bin/jsHelper $SPICETIFY_CONFIG/jsHelper
         # grab the css map
-        cp -r ${cfg.cssMap} css-map.json
+        cp -r ${cfg.cssMap} $SPICETIFY_CONFIG/css-map.json
         # add the current directory to path
         export PATH=$SPICETIFY_CONFIG:$PATH
         
