@@ -57,7 +57,7 @@ in
     };
     enabledCustomApps = mkOption {
       type = types.listOf (types.oneOf [ spiceTypes.app types.str ]);
-      default = { };
+      default = [ ];
     };
 
     xpui = mkOption {
