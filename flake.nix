@@ -20,8 +20,6 @@
     # legacy reasons...
     defaultSystem = "x86_64-linux";
   in {
-    homeManagerModule = import ./module.nix;
-
     # legacy stuff thats just for x86_64 linux
     pkgs = pkgs.${defaultSystem}.callPackage ./pkgs {};
     lib = pkgs.${defaultSystem}.callPackage ./lib {};
@@ -30,8 +28,15 @@
     libs = genSystems (
       system: (pkgs.${system}.callPackage ./lib {})
     );
-    pkgSets = genSystems (
-      system: (pkgs.${system}.callPackage ./pkgs {})
-    );
+
+    packages = genSystems (system: rec {
+      spicetify = pkgs.${system}.callPackage ./pkgs {};
+      default = spicetify;
+    });
+
+    homeManagerModules = rec {
+      spicetify = import ./module.nix;
+      default = spicetify;
+    };
   };
 }
