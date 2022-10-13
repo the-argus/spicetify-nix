@@ -29,14 +29,14 @@
       system: (pkgs.${system}.callPackage ./lib {})
     );
 
-    packages = genSystems (system: rec {
+    packages = genSystems (system: {
       spicetify = pkgs.${system}.callPackage ./pkgs {};
-      default = spicetify;
+      default = self.packages.${system}.spicetify;
     });
 
-    homeManagerModules = rec {
+    homeManagerModules = {
       spicetify = import ./module.nix;
-      default = spicetify;
+      default = self.homeManagerModules.spicetify;
     };
 
     pkgSets = genSystems (system: (
