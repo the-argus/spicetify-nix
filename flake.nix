@@ -38,5 +38,16 @@
       spicetify = import ./module.nix;
       default = spicetify;
     };
+
+    pkgSets = genSystems (system: (
+      nixpkgs.lib.warn
+      "deprecated, use packages.${system}.default"
+      self.packages.${system}.default
+    ));
+
+    homeManagerModule =
+      nixpkgs.lib.warn
+      "deprecated, use homeManagerModules.default"
+      self.homeManagerModules.default;
   };
 }
