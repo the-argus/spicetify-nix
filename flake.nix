@@ -5,11 +5,7 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {nixpkgs, ...}: let
     supportedSystems = [
       "x86_64-linux"
       "aarch64-linux"
@@ -49,5 +45,10 @@
       nixpkgs.lib.warn
       "deprecated, use homeManagerModules.default"
       self.homeManagerModules.default;
+
+    templates.default = {
+      path = ./template;
+      description = "A basic home-manager configuration which installs spicetify with the Dribbblish theme.";
+    };
   };
 }
