@@ -25,14 +25,19 @@
       default = spicetify;
     });
 
-    homeManagerModules = rec {
+    nixosModules = rec {
+      spicetify = import ./nixosmodule.nix;
+      default = spicetify;
+    };
+
+   homeManagerModules = rec {
       spicetify = import ./module.nix;
       default = spicetify;
     };
 
     # a nice alias
     homeManagerModule = homeManagerModules.default;
-
+    nixosModule = nixosModules.default;
     templates.default = {
       path = ./template;
       description = "A basic home-manager configuration which installs spicetify with the Dribbblish theme.";
