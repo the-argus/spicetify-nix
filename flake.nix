@@ -5,17 +5,22 @@
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-unstable";
 
     flake-utils.url = "github:numtide/flake-utils";
+
+    spicetify-cli = {
+      url = "github:spicetify/spicetify-cli";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, spicetify-cli, ... }:
     {
       homeManagerModules = {
-        spicetify = (import ./module.nix) { isNixOSModule = false; };
+        spicetify = (import ./module.nix) { isNixOSModule = false; inherit spicetify-cli; };
         default = self.homeManagerModules.spicetify;
       };
 
       nixosModules = {
-        spicetify = import ./module.nix { isNixOSModule = true; };
+        spicetify = import ./module.nix { isNixOSModule = true; inherit spicetify-cli; };
         default = self.nixosModules.spicetify;
       };
 
