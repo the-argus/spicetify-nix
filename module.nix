@@ -384,13 +384,10 @@ in {
           # give warning if spotifywm is set redundantly
           if cfg.spotifyPackage == pkgs.spotifywm && cfg.windowManagerPatch
           then lib.trivial.warn "spotify package set to spotifywm and windowManagerPatch is set to true. It is recommended to only use windowManagerPatch."
-          else
-            (
-              # wrap spotify with the window manager patch if necessary
-              if cfg.windowManagerPatch
-              then spicePkgs.spotifywm.override {spotify = spiced-spotify;}
-              else spiced-spotify
-            )
+          # wrap spotify with the window manager patch if necessary
+          else if cfg.windowManagerPatch
+          then spicePkgs.spotifywm.override {spotify = spiced-spotify;}
+          else spiced-spotify
         )
       ]
       ++
