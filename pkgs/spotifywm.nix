@@ -27,5 +27,7 @@ stdenv.mkDerivation rec {
     cp ${spotify}/bin/spotify $out/bin
     wrapProgram $out/bin/spotify \
         --set LD_PRELOAD "$out/lib/spotifywm.so"
+    # wrapper for spotifywm nixpkgs compatibility
+    ln -sf $out/bin/spotify $out/bin/spotifywm
   '';
 }
