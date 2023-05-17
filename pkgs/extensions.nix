@@ -194,13 +194,7 @@ in
         };
       };
     in
-      {
-        "dribbblish.js" = dribbblishExt;
-        "turntable.js" = turntableExt;
-        dribbblish = dribbblishExt;
-        turntable = turntableExt;
-      }
-      // mkOfficialExt "autoSkipExplicit"
+      mkOfficialExt "autoSkipExplicit"
       // mkOfficialExt "autoSkipVideo"
       // mkOfficialExt "bookmark"
       // mkOfficialExt "fullAppDisplay"

@@ -51,15 +51,21 @@
         (legacyPkgs.callPackage ./lib {});
     })
     // flake-utils.lib.eachSystem
-    (let inherit (flake-utils.lib) system; in [system.aarch64-linux system.x86_64-linux]) (system: let
+    (let inherit (flake-utils.lib) system; in [
+    # system.aarch64-linux 
+    system.x86_64-linux]) (system: let
       pkgs = import nixpkgs {inherit system;};
     in {
       libs = pkgs.callPackage ./lib {};
 
       packages = {
-        spicetify = pkgs.callPackage ./pkgs {};
+        # spicetify = pkgs.callPackage ./pkgs {};
+        # default = self.packages.${system}.spicetify;
+      };
 
-        default = self.packages.${system}.spicetify;
+      checks = {
+        all-tests = pkgs.callPackage ./tests {};
+        default = self.checks.${system}.all-tests;
       };
 
       formatter = pkgs.alejandra;
