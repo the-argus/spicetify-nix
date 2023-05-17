@@ -93,7 +93,7 @@ in {
     replaceColors = mkOption {
       type = lib.types.nullOr lib.types.bool;
       default =
-        if (cfg.theme == null && cfg.customColorScheme != null)
+        if (cfg.customColorScheme != null)
         then true
         else null;
     };
