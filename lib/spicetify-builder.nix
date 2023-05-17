@@ -62,6 +62,7 @@
   spicetifyCmd = "spicetify-cli --no-restart";
 in
   spotify.overrideAttrs (_: {
+    name = "spicetify-${theme.name}";
     postInstall = ''
       export SPICETIFY_CONFIG=$out/share/spicetify
       mkdir -p $SPICETIFY_CONFIG
