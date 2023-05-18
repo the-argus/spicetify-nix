@@ -82,11 +82,6 @@ with source; let
     src = "${charlieS1103Src}/wikify";
     filename = "wikify.js";
   };
-  fixEnhance = {
-    src = "${charlieS1103Src}/fixEnhance";
-    filename = "fixEnhance.js";
-    experimentalFeatures = true;
-  };
   phraseToPlaylist = {
     src = "${charlieS1103Src}/phraseToPlaylist";
     filename = "phraseToPlaylist.js";
@@ -234,7 +229,6 @@ in
   // appendJS playlistIntersection
   // appendJS skipStats
   // appendJS phraseToPlaylist
-  // appendJS fixEnhance
   // appendJS wikify
   // appendJS featureShuffle
   // appendJS songStats
