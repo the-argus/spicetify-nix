@@ -71,12 +71,17 @@
         default = self.packages.${system}.spicetify;
       };
 
-      checks = {
-        all-tests = pkgs.callPackage ./tests {};
-        minimal-config = pkgs.callPackage ./tests/minimal-config.nix {};
-        apps = pkgs.callPackage ./tests/apps.nix {};
-        default = self.checks.${system}.all-tests;
-      };
+      checks =
+        {
+          all-tests = pkgs.callPackage ./tests {};
+          minimal-config = pkgs.callPackage ./tests/minimal-config.nix {};
+          all-for-theme = pkgs.callPackage ./tests/all-for-theme.nix {};
+          apps = pkgs.callPackage ./tests/apps.nix {};
+          default = self.checks.${system}.all-tests;
+        }
+        // (builtins.mapAttrs
+          (_: value: self.checks.${system}.all-for-theme value)
+          (pkgs.callPackage ./pkgs {}).themes);
 
       formatter = pkgs.alejandra;
 
