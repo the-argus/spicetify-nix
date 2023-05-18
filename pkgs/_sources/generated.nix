@@ -250,16 +250,16 @@
   };
   nordSrc = {
     pname = "nordSrc";
-    version = "57d135e5ec10bee1e4e67d72f56718a3c075a53c";
+    version = "2932b0a26270232142b83845f6804ff039c13263";
     src = fetchgit {
       url = "https://github.com/Tetrax-10/Nord-Spotify";
-      rev = "57d135e5ec10bee1e4e67d72f56718a3c075a53c";
+      rev = "2932b0a26270232142b83845f6804ff039c13263";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
-      sha256 = "sha256-95ZcijR+DOX3xQlCstOdGisBwOenC6muojdpNfDKneM=";
+      sha256 = "sha256-Lde6uLo6iGKKeLp1DBc/xdcrn38rQh9SC2hgG0oCJ0k=";
     };
-    date = "2023-05-18";
+    date = "2023-05-17";
   };
   officialSrc = {
     pname = "officialSrc";
