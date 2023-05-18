@@ -49,16 +49,16 @@
     extensions);
 
   customAppCommands = builtins.concatStringsSep "\n" (map
-    (item: let command = "cp -rn ${(
-      if (builtins.hasAttr "appendName" item)
-      then
-        if (item.appendName)
-        then "${item.src}/${item.name}"
+    (item: let
+      command = "cp -rn ${(
+        if (builtins.hasAttr "appendName" item)
+        then
+          if (item.appendName)
+          then "${item.src}/${item.name}"
+          else "${item.src}"
         else "${item.src}"
-      else "${item.src}"
-    )} ./CustomApps/${item.name}";
-    in
-    "${command} || echo \"Copying custom app ${item.name} failed.\"")
+      )} ./CustomApps/${item.name}";
+    in "${command} || echo \"Copying custom app ${item.name} failed.\"")
     apps);
 
   spicetifyCmd = "spicetify-cli --no-restart";
