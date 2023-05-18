@@ -15,11 +15,11 @@ with source; let
     filename = "savePlaylists.js";
   };
   fullScreen = {
-    src = "${dakshExtensions}/Extensions";
+    src = "${dakshExtensions}/Extensions/full-screen/dist";
     filename = "fullScreen.js";
   };
   autoSkip = {
-    src = "${dakshExtensions}/Extensions";
+    src = "${dakshExtensions}/Extensions/auto-skip/dist";
     filename = "autoSkip.js";
   };
   playNext = {
