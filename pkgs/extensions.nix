@@ -97,7 +97,7 @@ with source; let
     filename = "fullAlbumDate.js";
   };
   fullAppDisplayMod = {
-    src = "${huhExtensionsSrc}/fullAppDisplayMod";
+    src = "${huhExtensionsSrc}/fullAppDisplayModified";
     filename = "fullAppDisplayMod.js";
   };
   goToSong = {
