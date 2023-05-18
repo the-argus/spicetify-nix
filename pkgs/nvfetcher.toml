@@ -126,4 +126,5 @@ fetch.git = "https://github.com/theRealPadster/name-that-tune"
 
 [marketplaceSrc]
 src.git = "https://github.com/spicetify/spicetify-marketplace"
+src.branch = "dist"
 fetch.git = "https://github.com/spicetify/spicetify-marketplace"
