@@ -71,17 +71,19 @@
         default = self.packages.${system}.spicetify;
       };
 
-      checks =
-        {
-          all-tests = pkgs.callPackage ./tests {};
-          minimal-config = pkgs.callPackage ./tests/minimal-config.nix {};
-          all-for-theme = pkgs.callPackage ./tests/all-for-theme.nix {};
-          apps = pkgs.callPackage ./tests/apps.nix {};
-          default = self.checks.${system}.all-tests;
-        }
-        // (builtins.mapAttrs
+      checks = {
+        all-tests = pkgs.callPackage ./tests {};
+        minimal-config = pkgs.callPackage ./tests/minimal-config.nix {};
+        all-for-theme = pkgs.callPackage ./tests/all-for-theme.nix {};
+        apps = pkgs.callPackage ./tests/apps.nix {};
+        default = self.checks.${system}.all-tests;
+        all-exts-and-apps =
+          builtins.mapAttrs
           (_: value: self.checks.${system}.all-for-theme value)
-          (pkgs.callPackage ./pkgs {}).themes);
+          (builtins.removeAttrs
+            (pkgs.callPackage ./pkgs {}).themes
+            ["override" "overrideDerivation"]);
+      };
 
       formatter = pkgs.alejandra;
 
