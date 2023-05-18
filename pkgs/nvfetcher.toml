@@ -123,6 +123,7 @@ fetch.git = "https://github.com/Resxt/startup-page"
 
 [nameThatTuneSrc]
 src.git = "https://github.com/theRealPadster/name-that-tune"
+src.branch = "dist"
 fetch.git = "https://github.com/theRealPadster/name-that-tune"
 
 [marketplaceSrc]
