@@ -81,7 +81,7 @@ in {
 
     xpui = mkOption {
       type = spiceTypes.xpui;
-      default = {};
+      default = spiceTypes.defaultXpui;
     };
 
     # legacy/ease of use options (commonly set for themes like Dribbblish)
@@ -124,6 +124,7 @@ in {
   };
 
   config = let
+    xpui = lib.attrsets.recursiveUpdate cfg.xpui spiceLib.types.defaultXpui;
     actualTheme = spiceLib.getTheme cfg.theme;
 
     # take the list of extensions and turn strings into actual extensions
@@ -133,12 +134,12 @@ in {
         (builtins.hasAttr "requiredExtensions" actualTheme)
         actualTheme.requiredExtensions
       )
-      ++ cfg.xpui.AdditionalOptions.extensions);
+      ++ xpui.AdditionalOptions.extensions);
 
     # do the same thing again but for customapps this time
     allApps =
       map spiceLib.getApp
-      (cfg.enabledCustomApps ++ cfg.xpui.AdditionalOptions.custom_apps);
+      (cfg.enabledCustomApps ++ xpui.AdditionalOptions.custom_apps);
 
     # custom spotify package with spicetify integrated in
     spiced-spotify = let
@@ -163,7 +164,7 @@ in {
           extensions = allExtensions;
           apps = allApps;
           theme = actualTheme;
-          cfgXpui = cfg.xpui;
+          cfgXpui = xpui;
           cfgColorScheme = cfg.colorScheme;
           inherit cfg;
         };

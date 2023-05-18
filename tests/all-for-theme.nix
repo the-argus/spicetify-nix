@@ -15,13 +15,7 @@
 
   config-xpui = spiceLib.xpuiBuilder {
     inherit extensions apps theme;
-    cfgXpui = {
-      AdditionalOptions = {};
-      Patch = {};
-      Setting = {};
-      Patch = {};
-      Backup = {};
-    };
+    cfgXpui = spiceLib.types.defaultXpui;
     cfgColorScheme = null;
     cfg = {};
   };
