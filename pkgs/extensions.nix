@@ -74,6 +74,10 @@ with source; let
     src = "${charlieS1103Src}/featureshuffle";
     filename = "featureshuffle.js";
   };
+  oldSidebar = {
+    src = "${charlieS1103Src}/old-sidebar";
+    filename = "oldSidebar.js";
+  };
   wikify = {
     src = "${charlieS1103Src}/wikify";
     filename = "wikify.js";
@@ -248,3 +252,4 @@ in
   // appendJS fullScreen
   // appendJS playNext
   // appendJS volumePercentage
+  // appendJS oldSidebar
