@@ -11,10 +11,69 @@ To use, add this flake to your home-manager configuration flake inputs, like so:
 
 ```nix
 {
+  # create an input called spicetify-nix, and set its url to this repository
   inputs.spicetify-nix.url = github:the-argus/spicetify-nix;
 }
 
 ```
+
+And when writing your outputs function, make sure to accept `spicetify-nix` (or
+whatever you chose to call it in the inputs) as a function input:
+
+```nix
+{
+    outputs = { nixpkgs, spicetify-nix, ...}: let # notice spicetify-nix here
+        pkgs = import nixpkgs { system = "x84_64-linux"; };
+    in {
+      homeConfigurations."your_username" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        extraSpecialArgs = {inherit spicetify-nix;};
+        modules = [
+            ./home.nix
+            ./spicetify.nix # file where you configure spicetify
+        ];
+      };
+    }
+}
+```
+
+An even more general solution is available, though, which isn't necessary but
+is recommended, as it will prevent you from having to manually put all other
+flake inputs you may add in the future to `extraSpecialArgs`. You can make a
+variable which contains all of your flake inputs, no matter what you change them
+to, and just pass that to `extraSpecialArgs`. Home manager even has a reserved
+argument inside of `extraSpecialArgs` for that: `inputs`.
+
+```nix
+{
+    # the ... lets us accept any inputs, and "@ inputs" lets us capture those.
+    outputs = { nixpkgs, ...} @ inputs: let     
+        # here we use nixpkgs from our inputs, which is why why included it
+        # above instead of just {...} @ inputs. If we did that, this would be
+        # "inputs.nixpkgs".
+        pkgs = import nixpkgs { system = "x84_64-linux"; };
+    in {
+      homeConfigurations."your_username" = home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        # put our flake inputs into the "inputs" argument of extraSpecialArgs.
+        extraSpecialArgs = {inherit inputs;};
+        modules = [
+            ./home.nix
+            ./spicetify.nix # file where you configure spicetify
+        ];
+      };
+    }
+}
+```
+
+For more information on the (many) different ways of passing flake inputs to
+modules can be found in [this wonderful blog post by Nobbz](https://blog.nobbz.dev/2022-12-12-getting-inputs-to-modules-in-a-flake/)
+
+If you want to do it as a NixOS module instead of a home-manager module, the
+process is the same except you use `specialArgs` instead of `extraSpecialArgs`
+in `nixpkgs.lib.nixosSystem`. Also be sure to import `spicetify-nix.nixosModule`
+instead of `spicetify-nix.homeManagerModule`, which you'll see happen in then next
+section.
 
 ## Configuration examples
 
@@ -145,7 +204,7 @@ in
 
       # specify that we want to use our custom colorscheme
       colorScheme = "custom";
-      
+
       # color definition for custom color scheme. (rosepine)
       customColorScheme = {
         text = "ebbcba";
@@ -165,7 +224,7 @@ in
         notification-error = "eb6f92";
         misc = "6e6a86";
       };
-      
+
       enabledCustomApps = with spicePkgs.apps; [
         new-releases
         {
