@@ -12,7 +12,7 @@ To use, add this flake to your home-manager configuration flake inputs, like so:
 ```nix
 {
   # create an input called spicetify-nix, and set its url to this repository
-  inputs.spicetify-nix.url = github:the-argus/spicetify-nix;
+  inputs.spicetify-nix.url = "github:the-argus/spicetify-nix";
 }
 
 ```
