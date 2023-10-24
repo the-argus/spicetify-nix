@@ -51,7 +51,7 @@ argument inside of `extraSpecialArgs` for that: `inputs`.
         # here we use nixpkgs from our inputs, which is why why included it
         # above instead of just {...} @ inputs. If we did that, this would be
         # "inputs.nixpkgs".
-        pkgs = import nixpkgs { system = "x84_64-linux"; };
+        pkgs = import nixpkgs { system = "x86_64-linux"; };
     in {
       homeConfigurations."your_username" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
