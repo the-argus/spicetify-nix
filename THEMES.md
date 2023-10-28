@@ -33,6 +33,9 @@ Default spotify, but provides a spinning image of a record when used with fullAp
 ### Ziro
 Inspired by the Zorin GTK theme.
 ![preview](https://raw.githubusercontent.com/schnensch0/ziro/main/preview/album-blue-dark.png)
+### text
+A TUI-like theme.
+![preview](https://raw.githubusercontent.com/spicetify/spicetify-themes/master/text/screenshots/Spotify.png)
 
 ## Community Themes
 ### Catppuccin*
