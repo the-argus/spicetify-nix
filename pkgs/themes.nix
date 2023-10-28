@@ -4,27 +4,7 @@
   ...
 }:
 with source; let
-  # THEME GENERATORS ----------------------------------------------------------
-  mkCatppuccinTheme = name: {
-    ${name} = {
-      inherit name;
-      src = catppuccinSrc;
-      appendName = true;
-      requiredExtensions = [
-        {
-          src = "${catppuccinSrc}/js";
-          filename = "${name}.js";
-        }
-      ];
-      injectCss = true;
-      replaceColors = true;
-      overwriteAssets = true;
-      sidebarConfig = false;
-    };
-  };
-
   # THEMES --------------------------------------------------------------------
-
   SpotifyNoPremium = {
     name = "SpotifyNoPremium";
     src = spotifyNoPremiumSrc;
@@ -200,94 +180,98 @@ with source; let
       }
     ];
   };
-in
-  {
-    official = let
-      dribbblishExt = {
-        filename = "dribbblish.js";
-        src = "${officialThemes}/Dribbblish";
+in {
+  official = let
+    dribbblishExt = {
+      filename = "dribbblish.js";
+      src = "${officialThemes}/Dribbblish";
+    };
+
+    turntableExt = {
+      filename = "turntable.js";
+      src = "${officialThemes}/Turntable";
+    };
+    mkOfficialTheme = themeName: {
+      ${themeName} = {
+        name = themeName;
+        src = officialThemes;
+        appendName = true;
+        injectCss = true;
+        replaceColors = true;
+        overwriteAssets = false;
+        sidebarConfig = false;
+      };
+    };
+  in
+    {
+      Dribbblish = {
+        name = "Dribbblish";
+        src = officialThemes;
+        requiredExtensions = [dribbblishExt];
+        patches = {
+          "xpui.js_find_8008" = ",(\\w+=)32";
+          "xpui.js_repl_8008" = ",$\{1}56";
+        };
+        injectCss = true;
+        replaceColors = true;
+        overwriteAssets = true;
+        appendName = true;
+        sidebarConfig = true;
+        additionalCss = ''
+          .Root {
+            padding-top: 0px;
+          }
+        '';
       };
 
-      turntableExt = {
-        filename = "turntable.js";
-        src = "${officialThemes}/Turntable";
+      Dreary = {
+        name = "Dreary";
+        src = officialThemes;
+        sidebarConfig = true;
+        appendName = true;
       };
-      mkOfficialTheme = themeName: {
-        ${themeName} = {
-          name = themeName;
-          src = officialThemes;
-          appendName = true;
-          injectCss = true;
-          replaceColors = true;
-          overwriteAssets = false;
-          sidebarConfig = false;
-        };
+      Glaze = {
+        name = "Glaze";
+        src = officialThemes;
+        sidebarConfig = true;
+        appendName = true;
       };
-    in
-      {
-        Dribbblish = {
-          name = "Dribbblish";
-          src = officialThemes;
-          requiredExtensions = [dribbblishExt];
-          patches = {
-            "xpui.js_find_8008" = ",(\\w+=)32";
-            "xpui.js_repl_8008" = ",$\{1}56";
-          };
-          injectCss = true;
-          replaceColors = true;
-          overwriteAssets = true;
-          appendName = true;
-          sidebarConfig = true;
-          additionalCss = ''
-            .Root {
-              padding-top: 0px;
-            }
-          '';
-        };
-
-        Dreary = {
-          name = "Dreary";
-          src = officialThemes;
-          sidebarConfig = true;
-          appendName = true;
-        };
-        Glaze = {
-          name = "Glaze";
-          src = officialThemes;
-          sidebarConfig = true;
-          appendName = true;
-        };
-        Turntable = {
-          name = "Turntable";
-          src = officialThemes;
-          requiredExtensions = ["fullAppDisplay.js" turntableExt];
-        };
-      }
-      // mkOfficialTheme "Ziro"
-      // mkOfficialTheme "Sleek"
-      // mkOfficialTheme "Onepunch"
-      // mkOfficialTheme "Flow"
-      // mkOfficialTheme "Default"
-      // mkOfficialTheme "BurntSienna"
-      // mkOfficialTheme "Blossom"
-      // mkOfficialTheme "Sleek"
-      // mkOfficialTheme "Nightlight"
-      // mkOfficialTheme "Matte";
-    inherit
-      SpotifyNoPremium
-      Fluent
-      DefaultDynamic
-      RetroBlur
-      Omni
-      Bloom
-      Orchis
-      Dracula
-      Nord
-      SpotifyCanvas
-      Comfy
-      ;
-  }
-  // mkCatppuccinTheme "catppuccin-mocha"
-  // mkCatppuccinTheme "catppuccin-frappe"
-  // mkCatppuccinTheme "catppuccin-latte"
-  // mkCatppuccinTheme "catppuccin-macchiato"
+      Turntable = {
+        name = "Turntable";
+        src = officialThemes;
+        requiredExtensions = ["fullAppDisplay.js" turntableExt];
+      };
+      catppuccin = {
+        name = "catppuccin";
+        src = catppuccinSrc;
+        appendName = true;
+        injectCss = true;
+        replaceColors = true;
+        overwriteAssets = true;
+        sidebarConfig = false;
+      };
+    }
+    // mkOfficialTheme "Ziro"
+    // mkOfficialTheme "Sleek"
+    // mkOfficialTheme "Onepunch"
+    // mkOfficialTheme "Flow"
+    // mkOfficialTheme "Default"
+    // mkOfficialTheme "BurntSienna"
+    // mkOfficialTheme "Blossom"
+    // mkOfficialTheme "Sleek"
+    // mkOfficialTheme "Nightlight"
+    // mkOfficialTheme "Matte";
+  inherit
+    SpotifyNoPremium
+    Fluent
+    DefaultDynamic
+    RetroBlur
+    Omni
+    Bloom
+    Orchis
+    Dracula
+    Nord
+    SpotifyCanvas
+    Comfy
+    ;
+}

@@ -13,12 +13,12 @@
     hidePodcasts
   ];
 
-  theme = spicePkgs.themes.catppuccin-mocha;
+  theme = spicePkgs.themes.catppuccin;
 
   config-xpui = spiceLib.xpuiBuilder {
     inherit extensions theme;
     cfgXpui = spiceLib.types.defaultXpui;
-    cfgColorScheme = "flamingo";
+    cfgColorScheme = "mocha";
     cfg = {};
     apps = [];
   };
