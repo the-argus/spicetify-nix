@@ -67,19 +67,34 @@
       libs = pkgs.callPackage ./lib {};
 
       packages = {
-        spicetify = pkgs.callPackage ./pkgs {};
+        spicetify =
+          pkgs.lib.trivial.warn
+          ''spicetify-nix.packages.$\{pkgs.system}.default is deprecated, use spicetify-nix.spicePkgs.$\{pkgs.system} instead.''
+          (pkgs.emptyDirectory // (self.spicePkgs.${system}));
         default = self.packages.${system}.spicetify;
       };
+
+      spicePkgs = pkgs.callPackage ./pkgs {};
 
       checks = {
         all-tests = pkgs.callPackage ./tests {};
         minimal-config = pkgs.callPackage ./tests/minimal-config.nix {};
-        all-for-theme = pkgs.callPackage ./tests/all-for-theme.nix {};
         apps = pkgs.callPackage ./tests/apps.nix {};
         default = self.checks.${system}.all-tests;
+      };
+
+      # functions or sets that are useful for testing
+      testing-utils = {
+        # input a theme name, get a derivation which builds a spicetify config
+        # which has that theme and *every* extension enabled.
+        all-for-theme = pkgs.callPackage ./tests/all-for-theme.nix {};
+
+        # a set in which you can access all-for-theme outputs for a given theme.
+        # all-exts-and-apps.catppuccin would give you the derivation which has
+        # catppuccin and every extension enabled
         all-exts-and-apps =
           builtins.mapAttrs
-          (_: value: self.checks.${system}.all-for-theme value)
+          (_: value: self.testing-utils.${system}.all-for-theme value)
           (builtins.removeAttrs
             (pkgs.callPackage ./pkgs {}).themes
             ["override" "overrideDerivation"]);
