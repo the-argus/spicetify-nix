@@ -143,7 +143,10 @@ in {
 
     # custom spotify package with spicetify integrated in
     spiced-spotify = let
-      isSpotifyWM = cfg.spotifyPackage == pkgs.spotifywm;
+      isSpotifyWM =
+        if pkgs.stdenv.isDarwin
+        then false
+        else cfg.spotifyPackage == pkgs.spotifywm;
 
       spotifyToOverride =
         if isSpotifyWM
@@ -177,13 +180,16 @@ in {
     packagesToInstall =
       [
         (
-          # give warning if spotifywm is set redundantly
-          if cfg.spotifyPackage == pkgs.spotifywm && cfg.windowManagerPatch
-          then lib.trivial.warn "spotify package set to spotifywm and windowManagerPatch is set to true. It is recommended to only use windowManagerPatch."
-          # wrap spotify with the window manager patch if necessary
-          else if cfg.windowManagerPatch
-          then spicePkgs.spotifywm.override {spotify = spiced-spotify;}
-          else spiced-spotify
+          if pkgs.stdenv.isDarwin
+          then spiced-spotify
+          else
+            # give warning if spotifywm is set redundantly
+            if cfg.spotifyPackage == pkgs.spotifywm && cfg.windowManagerPatch
+            then lib.trivial.warn "spotify package set to spotifywm and windowManagerPatch is set to true. It is recommended to only use windowManagerPatch."
+            # wrap spotify with the window manager patch if necessary
+            else if cfg.windowManagerPatch
+            then spicePkgs.spotifywm.override {spotify = spiced-spotify;}
+            else spiced-spotify
         )
       ]
       ++

@@ -15,16 +15,12 @@
   }:
     {
       homeManagerModules = {
-        spicetify = (import ./module.nix) {
-          isNixOSModule = false;
-        };
+        spicetify = (import ./module.nix) {isNixOSModule = false;};
         default = self.homeManagerModules.spicetify;
       };
 
       nixosModules = {
-        spicetify = import ./module.nix {
-          isNixOSModule = true;
-        };
+        spicetify = import ./module.nix {isNixOSModule = true;};
         default = self.nixosModules.spicetify;
       };
 
@@ -38,30 +34,27 @@
       };
     }
     # legacy stuff thats just for x86_64 linux
-    // (
-      let
-        legacyPkgs = import nixpkgs {system = flake-utils.lib.system.x86_64-linux;};
-      in {
-        pkgs =
-          nixpkgs.lib.warn
-          "spicetify-nix.pkgs is deprecated, use spicetify-nix.packages.\${pkgs.system}"
-          (legacyPkgs.callPackage ./pkgs {});
-        lib =
-          nixpkgs.lib.warn
-          "spicetify-nix.lib is deprecated, use spicetify-nix.libs.\${pkgs.system}"
-          (legacyPkgs.callPackage ./lib {});
-      }
-    )
-    // flake-utils.lib.eachSystem
-    (
-      let
-        inherit (flake-utils.lib) system;
-      in [
-        system.aarch64-linux
-        system.x86_64-linux
-      ]
-    )
-    (system: let
+    // (let
+      legacyPkgs =
+        import nixpkgs {system = flake-utils.lib.system.x86_64-linux;};
+    in {
+      pkgs =
+        nixpkgs.lib.warn
+        "spicetify-nix.pkgs is deprecated, use spicetify-nix.packages.\${pkgs.system}"
+        (legacyPkgs.callPackage ./pkgs {});
+      lib =
+        nixpkgs.lib.warn
+        "spicetify-nix.lib is deprecated, use spicetify-nix.libs.\${pkgs.system}"
+        (legacyPkgs.callPackage ./lib {});
+    })
+    // flake-utils.lib.eachSystem (let
+      inherit (flake-utils.lib) system;
+    in [
+      system.aarch64-linux
+      system.x86_64-linux
+      system.aarch64-darwin
+      system.x86_64-darwin
+    ]) (system: let
       pkgs = import nixpkgs {inherit system;};
     in {
       libs = pkgs.callPackage ./lib {};
@@ -80,9 +73,10 @@
         all-exts-and-apps =
           builtins.mapAttrs
           (_: value: self.checks.${system}.all-for-theme value)
-          (builtins.removeAttrs
-            (pkgs.callPackage ./pkgs {}).themes
-            ["override" "overrideDerivation"]);
+          (builtins.removeAttrs (pkgs.callPackage ./pkgs {}).themes [
+            "override"
+            "overrideDerivation"
+          ]);
       };
 
       formatter = pkgs.alejandra;
@@ -95,11 +89,8 @@
         self.packages.${system}.default;
 
       devShells = {
-        default = pkgs.mkShell {
-          packages = [
-            pkgs.nvfetcher
-          ];
-        };
+        default =
+          pkgs.mkShell {packages = [pkgs.nvfetcher pkgs.alejandra];};
       };
     });
 }

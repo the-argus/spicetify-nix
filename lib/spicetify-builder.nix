@@ -2,6 +2,7 @@
   lib,
   coreutils-full,
   callPackage,
+  stdenv,
   ...
 }: {
   spotify,
@@ -20,17 +21,15 @@
   spiceLib = callPackage ./. {};
 
   # add extra css if theme requires
-  extraCss = builtins.toFile "extra.css" (
-    optionalString
-    (builtins.hasAttr "additionalCss" theme)
-    theme.additionalCss
-  );
+  extraCss =
+    builtins.toFile "extra.css"
+    (optionalString (builtins.hasAttr "additionalCss" theme)
+      theme.additionalCss);
   # add custom color scheme if configured
   customColorSchemeScript = let
     customColorSchemeINI =
       builtins.toFile "dummy-color.ini"
-      (spiceLib.createXpuiINI
-        {custom = customColorScheme;});
+      (spiceLib.createXpuiINI {custom = customColorScheme;});
   in
     optionalString usingCustomColorScheme ''
       mkdir -p Themes/${theme.name}
@@ -38,28 +37,40 @@
       cat ${customColorSchemeINI} >> Themes/${theme.name}/color.ini
     '';
 
-  extensionCommands = builtins.concatStringsSep "\n" (map
-    (
-      item: let
-        command = "cp -rn ${
-          item.src
-        }/${item.filename} ./Extensions/${item.filename}";
-      in "${command} || echo \"Copying extension ${item.filename} failed.\""
-    )
-    extensions);
+  extensionCommands = builtins.concatStringsSep "\n" (map (item: let
+    command = "cp -rn ${item.src}/${item.filename} ./Extensions/${item.filename}";
+  in ''${command} || echo "Copying extension ${item.filename} failed."'')
+  extensions);
 
-  customAppCommands = builtins.concatStringsSep "\n" (map
-    (item: let
-      command = "cp -rn ${(
+  customAppCommands = builtins.concatStringsSep "\n" (map (item: let
+    command = "cp -rn ${
+      (
         if (builtins.hasAttr "appendName" item)
         then
           if (item.appendName)
           then "${item.src}/${item.name}"
           else "${item.src}"
         else "${item.src}"
-      )} ./CustomApps/${item.name}";
-    in "${command} || echo \"Copying custom app ${item.name} failed.\"")
-    apps);
+      )
+    } ./CustomApps/${item.name}";
+  in ''${command} || echo "Copying custom app ${item.name} failed."'')
+  apps);
+
+  darwinReplaceCommand = ''
+    mkdir -p $out/Library/Application\ Support/Spotify/
+    touch $out/Library/Application\ Support/Spotify/prefs
+
+    # replace the spotify path with the current derivation's path
+    sed -i "s|__REPLACEME__|$out/Applications/Spotify.app/Contents/Resources|g" config-xpui.ini
+    sed -i "s|__REPLACEME2__|$out/Library/Application\ Support/Spotify/prefs|g" config-xpui.ini
+  '';
+
+  linuxReplaceCommand = ''
+    touch $out/share/spotify/prefs
+    # replace the spotify path with the current derivation's path
+    sed -i "s|__REPLACEME__|$out/share/spotify|g" config-xpui.ini
+    sed -i "s|__REPLACEME2__|$out/share/spotify/prefs|g" config-xpui.ini
+  '';
 
   spicetifyCmd = "spicetify-cli --no-restart";
 in
@@ -84,14 +95,16 @@ in
       # create config and prefs
       cp ${config-xpui} config-xpui.ini
       ${coreutils-full}/bin/chmod a+wr config-xpui.ini
-      touch $out/share/spotify/prefs
 
-      # replace the spotify path with the current derivation's path
-      sed -i "s|__REPLACEME__|$out/share/spotify|g" config-xpui.ini
-      sed -i "s|__REPLACEME2__|$out/share/spotify/prefs|g" config-xpui.ini
-
+      ${
+        if stdenv.isDarwin
+        then darwinReplaceCommand
+        else linuxReplaceCommand
+      }
       mkdir -p Themes
-      cp -r ${spiceLib.getThemePath theme} ./Themes/${theme.name} || echo "Copying theme ${theme.name} failed"
+      cp -r ${
+        spiceLib.getThemePath theme
+      } ./Themes/${theme.name} || echo "Copying theme ${theme.name} failed"
       ${coreutils-full}/bin/chmod -R a+wr Themes
       echo "copied theme"
       cat ${extraCss} >> ./Themes/${theme.name}/user.css
@@ -114,13 +127,15 @@ in
       ${extraCommands}
 
       # extra commands that the theme might need
-      ${
-        optionalString
+      ${optionalString
         (builtins.hasAttr "extraCommands" theme && theme.extraCommands != null)
-        theme.extraCommands
-      }
+        theme.extraCommands}
       popd > /dev/null
       ${spicetifyCmd} backup apply
-      rm $out/snap.yaml
+      ${
+        if stdenv.isLinux
+        then "rm $out/snap.yaml"
+        else ""
+      }
     '';
   })
