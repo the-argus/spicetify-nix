@@ -242,12 +242,6 @@ in {
         sidebarConfig = true;
         appendName = true;
       };
-      Glaze = {
-        name = "Glaze";
-        src = officialThemes;
-        sidebarConfig = true;
-        appendName = true;
-      };
       Turntable = {
         name = "Turntable";
         src = officialThemes;

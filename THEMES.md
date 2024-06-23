@@ -18,9 +18,6 @@ Modern, rounded, and minimal design, with fading effects and gradients.
 ### Flow
 Monochromatic colorschemes with subtle differences between colors, and soft vertical gradients.
 ![preview](https://raw.githubusercontent.com/spicetify/spicetify-themes/master/Flow/screenshots/ocean.png)
-### Glaze
-Simple theme which gives spotify a simpler design and a single highlight color.
-![preview](https://github.com/CharlieS1103/Glaze-theme/blob/main/screenshots/base.png)
 ### Onepunch
 Gruvbox.
 ![preview](https://github.com/spicetify/spicetify-themes/blob/master/Onepunch/screenshots/dark_home.png)
