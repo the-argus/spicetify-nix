@@ -121,6 +121,6 @@ in
       }
       popd > /dev/null
       ${spicetifyCmd} backup apply
-      rm $out/snap.yaml
+      rm -f $out/snap.yaml
     '';
   })
