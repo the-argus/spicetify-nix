@@ -206,7 +206,7 @@ in {
     };
   in
     mkIf cfg.enable
-    ({
+    (lib.trivial.warn "the-argus/spicetify-nix is unmaintained. see the project's readme for migration instructions." ({
         programs.spicetify.spicedSpotify = spiced-spotify;
         programs.spicetify.createdPackages = packagesToInstall;
         # install necessary packages for this user
@@ -215,5 +215,5 @@ in {
         if isNixOSModule
         then nixosConfiguration
         else homeConfiguration
-      ));
+      )));
 }

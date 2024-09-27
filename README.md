@@ -1,4 +1,19 @@
-# Spicetify-Nix
+# ARCHIVE
+
+This project is now archived, as I do not have time or focus to maintain it. Please direct any issues or contributions to this fork instead: [https://github.com/Gerg-L/spicetify-nix](https://github.com/Gerg-L/spicetify-nix). Besides being maintained, this flake has working automated updates, fixes for a bunch of broken plugins and themes (lyricsPlus, newReleases, dribbblish) and a hugely improved/simplified codebase.
+
+When I migrated from this flake to Gerg's, I had to make the following changes to my home manager configuration:
+
+1. `the-argus/spicetify-nix` -> `Gerg-L/spicetify-nix` :)
+2. `spicetify-nix.packages.${pkgs.system}.default` -> `spicetify-nix.legacyPackages.${pkgs.system}`
+3. `spicetify-nix.homeManagerModule` -> `spicetify-nix.homeManagerModules.default` (will be the same pattern if you are using `spicetify-nix.nixosModule`)
+4. `spicePkgs.themes.Onepunch` -> `spicePkgs.themes.onepunch`, and `Dribbblish` -> `dribbblish`, `SpotifyNoPremium` -> `spotifyNoPremium` etc. Camel case is enforced across all the package and theme names.
+
+[Here is the diff for this migration change.](https://github.com/the-argus/nixsys/commit/05d0c5415dedcc9a125a4a525ff37b6c4ee9787a)
+
+My apologies to anyone who waited on issues or outstanding PRs. My thanks to everyone who contributed or made issues. And thanks to Gerg who, besides maintaining the new flake, was a huge help when I was first working on this one.
+
+## Spicetify-Nix
 
 Modifies Spotify using [spicetify-cli](https://github.com/khanhas/spicetify-cli).
 
